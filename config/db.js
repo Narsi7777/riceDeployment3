@@ -1,12 +1,18 @@
 const {Pool} =require('pg')
-const pool=new Pool({
-    user:'postgres',
-    host:'localhost',
-    database:'RiceDistribution',
-    password:'Narsi@123',
-    port:'5432',
-    ssl: false,
-})
+require("dotenv").config();
+
+const devConfig={
+    user:process.env.PG_USER,
+    password:process.env.PG_PASSWORD,
+    host:process.env.PG_HOST,
+    database:process.env.PG_DATABASE,
+    port:process.env.PG_PORT
+}
+const proConfig={
+    connectionString:process.env.DATABASE_URL //heoku url
+}
+const pool=new Pool(process.env.NODE_ENV==="production"?proConfig:devConfig
+)
 
 pool.connect((err,client,release)=>{
     if(err){

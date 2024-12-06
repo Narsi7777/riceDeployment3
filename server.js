@@ -2,11 +2,16 @@ const express=require('express')
 const pool=require('./config/db')
 const cors=require("cors")
 const app=express()
+const path=require("path")
+const port=process.env.PORT||3000
+
 
 app.use(express.json())
 app.use(cors())
-
-
+//app.use(express.static("./Client/build"))
+if(process.env.NODE_ENV==="production"){
+    app.use(express.static(path.join(__dirname,"Client/build")))
+}
 //all storage operations
 
 app.get('/storage',async(req,res)=>{
@@ -255,7 +260,12 @@ app.post("/customers/addCustomer", async (req, res) => {
     }
   });
 
-port=3000
+app.get("*",(req,res)=>{
+    res.sendFile(path.join(__dirname,"Client/build/index.html"))
+
+})
+
+
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
 })
