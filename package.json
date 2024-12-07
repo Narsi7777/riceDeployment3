@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild":"cd Client && npm install && npm run build"
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "Narsiiiii",
