@@ -1,0 +1,136 @@
+
+.details{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.customers-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .customer-box {
+    border: 2px solid #e60000; /* Red border for the customer box */
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .customer-box h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .customer-box p {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  .customer-box .button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .customer-box input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .customer-box button {
+    padding: 10px;
+    font-size: 14px;
+    background-color: #e60000; /* Red color for buttons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .customer-box button:hover {
+    background-color: #cc0000; /* Darker red for hover effect */
+  }
+  
+  .new-customer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .new-customer-form input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .new-customer-form button {
+    background-color: #4CAF50; /* Green for add customer button */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .new-customer-form button:hover {
+    background-color: #45a049;
+  }
+  
+  .new-customer button {
+    background-color: #008CBA; /* Blue for new customer button */
+    color: white;
+  }
+  
+  .new-customer button:hover {
+    background-color: #007B9A;
+  }
+  
+  .new-customer-form button[type="button"] {
+    background-color: #f44336; /* Red for cancel button */
+  }
+  
+  .new-customer-form button[type="button"]:hover {
+    background-color: #d32f2f;
+  }
+  
+  .add-button,
+  .remove-button {
+    width: 48%;
+  }
+  
+  .ok-button {
+    width: 100%;
+    background-color: #008CBA;
+    color: white;
+  }
+  
+  .ok-button:hover {
+    background-color: #007B9A;
+  }
+  
+  .search-box {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+  }
+  

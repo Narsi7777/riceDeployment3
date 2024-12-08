@@ -1,0 +1,24 @@
+.main-page {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .buttons {
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .content {
+    margin-top: 20px;
+  }
+  

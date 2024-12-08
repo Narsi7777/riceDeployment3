@@ -1,0 +1,71 @@
+.storage-container{
+    width: 80%;
+    margin: 20px;
+    text-align: center;
+}
+
+.storage-box{
+    border: 2px solid #ddd;
+    padding: 50x;
+    margin: 15px 0;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.storage-box h2{
+    font-size: 1.5 rem;
+    color: #333;
+}
+
+.storage-box p{
+    font-size: 1em;
+    color: #555;
+}
+
+.button-container{
+    margin-top: 15px;
+
+}
+
+button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px;
+    font-size: 1em;
+    transition: background-color 0.3s;
+
+}
+
+button.add-button{
+    background-color: #4CAF50;
+    color: white;
+}
+
+button.add-button:hover{
+    background-color: #45a049;
+}
+
+button.remove-button{
+    background-color: red;
+    color: white;
+
+}
+
+button.remove-button:hover{
+    background-color: #e53935;
+}
+
+button.ok-button{
+    background-color: blue;
+    color: white;
+}
+button.ok-button:hover{
+    background-color: #1976d2; 
+}
+
+button.newBrandButton{
+    background-color: blue;
+    color: white;
+    border-radius: 50px;
+}
