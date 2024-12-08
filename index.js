@@ -267,5 +267,5 @@ app.get("*",(req,res)=>{
 
 
 app.listen(port,()=>{
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port http://localhost:${port}`);
 })
