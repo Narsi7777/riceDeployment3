@@ -124,7 +124,7 @@ const CustomersList = () => {
         )}
       </div>
       {allButtonClicked && <AllDetails />}
-
+        
       {newCustomerButtonClicked && (
         <div className="new-customer-form">
           <form
