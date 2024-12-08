@@ -9,7 +9,10 @@ const devConfig={
     port:process.env.PG_PORT
 }
 const proConfig={
-    connectionString:process.env.DATABASE_URL //heoku url
+    connectionString:process.env.DATABASE_URL,
+    ssl:{
+        rerejectUnauthorized: false
+    }
 }
 const pool=new Pool(process.env.NODE_ENV==="production"?proConfig:devConfig
 )
