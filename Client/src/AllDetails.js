@@ -7,7 +7,7 @@ const [allData,setAllData]=useState([])
 useEffect(()=>{
     const fetchAllData=async()=>{
         try{
-            const responce=await axios.get("http://localhost:3000/storage/allDetails")
+            const responce=await axios.get("/storage/allDetails")
             setAllData(responce.data)
 
         }
