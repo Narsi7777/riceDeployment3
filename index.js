@@ -154,7 +154,19 @@ app.get("/storage/allDetails",async(req,res)=>{
 })
 // all customer operations
 
+app.get('/customers/allDetails',async(req,res)=>{
+    try{
+        const result=await pool.query("select sum(outstanding_balance) from customers")
+        const total=result.rows[0]["sum"]
+        console.log(total)
+        return res.status(200).send({"totalAmount":total})
 
+    }
+    catch(err){
+        return res.status(400).send("cannot get details...")
+    }
+
+})
 
 app.get("/customers",async(req,res)=>{
     try{
