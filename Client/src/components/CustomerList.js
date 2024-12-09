@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./CustomersList.css";
 import axios from "axios";
 import AllDetails from "../AllDetails";
+import AllCustomerDetails from "../AllCustomerDetails";
 
 const CustomersList = () => {
   const [customers, setCustomers] = useState([]);
@@ -123,8 +124,12 @@ const CustomersList = () => {
           </button>
         )}
       </div>
-      {allButtonClicked && <AllDetails />}
-        
+
+      <div className="allDetails">
+      {allButtonClicked && <AllDetails></AllDetails>}
+      {allButtonClicked && <AllCustomerDetails></AllCustomerDetails>}
+      </div>
+   
       {newCustomerButtonClicked && (
         <div className="new-customer-form">
           <form

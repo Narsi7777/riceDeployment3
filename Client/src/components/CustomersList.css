@@ -134,3 +134,6 @@
     margin: 10px auto;
   }
   
+  .allDetails{
+    display: flex;
+  }

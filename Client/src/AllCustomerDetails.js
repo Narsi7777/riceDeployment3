@@ -1,13 +1,13 @@
 import React,{useEffect,useState} from "react";
 import axios from "axios"
 
-const AllDetails=()=>{
+const AllCustomerDetails=()=>{
 const [allData,setAllData]=useState([])
 
 useEffect(()=>{
     const fetchAllData=async()=>{
         try{
-            const responce=await axios.get("/storage/allDetails")
+            const responce=await axios.get("/customers/allDetails")
             setAllData(responce.data)
 
         }
@@ -24,11 +24,10 @@ useEffect(()=>{
 return(
     
         <div style={styles.container}>
-          <h1 style={styles.title}>All Storage Data</h1>
+          <h1 style={styles.title}>All Customers Total</h1>
           <div style={styles.detailsContainer}>
-            <h2 style={styles.totalPackets}>Total Packets: {Number(allData.totalPackets).toLocaleString('en-IN')}</h2>
             <h3 style={styles.totalCost}>
-  {Number(allData.totalCost).toLocaleString('en-IN') } /-
+ {Number(allData.totalAmount).toLocaleString('en-IN') } /-
 </h3>
           </div>
         </div>
@@ -71,4 +70,4 @@ const styles = {
     },
   };
   
-  export default AllDetails;
+  export default AllCustomerDetails;
