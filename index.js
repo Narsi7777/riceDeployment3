@@ -446,6 +446,9 @@ app.get("/profits/all",async(req,res)=>{
         res.status(400).send(err)
     }
 })
+app.get("/profits", (req, res) => {
+    res.redirect("/profits/all");
+});
 
 app.put("/profits/addExpenses",async(req,res)=>{
     try{
