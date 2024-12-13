@@ -57,5 +57,21 @@ BEGIN
 END;
 $function$
 
+create table mills(
+mill_id serial primary key,
+mill_name varchar(100) not null,
+location varchar(100),
+amount_due numeric(10,2)
+);
 
 
+create profits(
+	profit_id serial primary key,
+	date_of_profit date,
+	profit_amount numeric(10,2),
+	expenses_amount numeric(10,2)
+);
+
+
+ALTER TABLE profits 
+ALTER COLUMN expenses_amount SET DEFAULT 0;

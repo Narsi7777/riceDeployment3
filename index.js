@@ -6,8 +6,9 @@ const path=require("path")
 const port=process.env.PORT||3000
 
 
-app.use(express.json())
+
 app.use(cors())
+app.use(express.json())
 //app.use(express.static("./Client/build"))
 if(process.env.NODE_ENV==="production"){
     app.use(express.static(path.join(__dirname,"Client/build")))
@@ -17,9 +18,7 @@ if(process.env.NODE_ENV==="production"){
 app.get('/storage',async(req,res)=>{
 try{
     const result=await pool.query('select * from Storage')
-    //console.log(result.rows)
     res.status(200).json(result.rows)
-
 }
 catch(err){
     console.log('error in fetching data from storage',err.stack)
@@ -173,7 +172,6 @@ app.get("/customers",async(req,res)=>{
         const response=await pool.query("select * from customers")
         console.log(response.rows)
         res.status(200).send(response.rows)
-
     }catch(err){
         console.log("error in retriving custoimer data ",err)
     }
@@ -272,12 +270,202 @@ app.post("/customers/addCustomer", async (req, res) => {
     }
   });
 
+
+
+
+
+
+app.post("/mill/createMill",async(req,res)=>{
+   try{
+    const {mill_name,location,amount_due}=req.body
+    console.log(mill_name,location,amount_due)
+    const result=await pool.query(`insert into mills (mill_name,location,amount_due) values ($1,$2,$3)`,[mill_name,location,amount_due])
+    console.log(result)
+    res.status(200).send("Data Received");
+   }
+   catch(err){
+        console.log("Error occured",err)
+        res.status(400).send({"Error":err})
+   }
+})
+
+app.put("/mill/addAmount/:id",async(req,res)=>{
+    try{
+        const id=req.params.id
+        const {amount}=req.body
+        const result=await pool.query(`update mills set amount_due=amount_due+$1 where mill_id=$2`,[amount,id])
+        res.status(200).send(result)
+    }catch(err){
+        res.status(400).send({"error":err})
+    }
+
+})
+app.put("/mill/removeAmount/:id",async(req,res)=>{
+    try{
+        const id=req.params.id
+        const {amount}=req.body
+        const result=await pool.query(`update mills set amount_due=amount_due-$1 where mill_id=$2`,[amount,id])
+        res.status(200).send(result)
+    }catch(err){
+        res.status(400).send({"error":err})
+    }
+})
+
+app.get("/mill/all", async (req, res) => {
+    try {
+        const result = await pool.query("SELECT * FROM mills")
+        res.status(200).send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(400).send({"error":err});
+    }
+});
+
+app.get("/mill/allAmount",async(req,res)=>{
+    try{
+        const result=await pool.query("select sum(amount_due) from mills")
+        res.status(200).send(result.rows)
+    }
+    catch(err){
+        res.status(400).send({"error":err})
+    }
+})
+
+
+    app.put("/profits/addProfit",async(req,res)=>{
+        const {profit}=req.body
+
+        try{
+            const todayDate=await pool.query("select to_char(current_date, 'DD-MM-YYYY') as current_date")
+            
+            const formattedDate=todayDate.rows[0]["current_date"]
+            const result=await pool.query(`select * from profits where date_of_profit=$1`,[formattedDate])
+            if (result.rowCount > 0) {
+               try{
+                    const result2=await pool.query(`update profits set profit_amount=profit_amount+$1 where date_of_profit=$2`,[parseFloat(profit),formattedDate])
+                    res.status(200).send("Updation successful into profits table")
+                }catch(err){
+                console.log("Error in Updationd Into Profits",err)
+                res.status(400).send(err)
+               }
+                
+            } else {
+                try{
+                    const resss=await pool.query(`insert into profits (date_of_profit,profit_amount) values ($1,$2)`,[formattedDate,parseFloat(profit)])
+                    res.status(200).send("insertion successful into profits table")
+                }catch(err){
+                    console.log("Error in Inserting Into Profits",err)
+                    res.status(400).send(err)
+                }
+            }
+
+        
+    }catch(err){
+        console.log("Error in adding profits",err)
+        res.status(400).send({"Error in adding profits":err})
+    }
+
+})
+app.get("/profits/today",async(req,res)=>{
+    try{
+        const result=await pool.query("select * from profits where date_of_profit=current_date")
+        res.status(200).send(result.rows)
+
+    }catch(err){
+        console.log("Error in fetching profits")
+        res.status(400).send(err)
+    }
+})
+app.get("/profits/date", async (req, res) => {
+    try {
+      const { date } = req.query; 
+      const result = await pool.query(
+        "SELECT * FROM profits WHERE date_of_profit = $1",
+        [date]
+      );
+      res.status(200).send(result.rows);
+    } catch (err) {
+      console.log("Error in fetching profits");
+      res.status(400).send(err);
+    }
+  });
+  
+app.get("/profits/month", async (req, res) => {
+    try {
+      // Get the start and end dates of the current month
+      const startDate = await pool.query("SELECT TO_CHAR(DATE_TRUNC('month', CURRENT_DATE), 'YYYY-MM-DD') AS start_date");
+      const endDate = await pool.query("SELECT TO_CHAR(DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day', 'YYYY-MM-DD') AS end_date");
+  
+      // Query to fetch both the total profit and total expenses for the current month
+      const result = await pool.query(
+        `SELECT 
+          SUM(profit_amount) AS total_profit, 
+          SUM(expenses_amount) AS total_expenses
+         FROM profits
+         WHERE date_of_profit BETWEEN $1 AND $2`,
+        [startDate.rows[0].start_date, endDate.rows[0].end_date]
+      );
+  
+      // Extract the total profit and expenses from the result
+      let totalProfit = result.rows[0].total_profit;
+      let totalExpenses = result.rows[0].total_expenses;
+  
+      // Handle null values (if no profit or expenses for the current month)
+      if (totalProfit === null) {
+        totalProfit = 0.00;
+      } else {
+        totalProfit = parseFloat(totalProfit).toFixed(2);
+      }
+  
+      if (totalExpenses === null) {
+        totalExpenses = 0.00;
+      } else {
+        totalExpenses = parseFloat(totalExpenses).toFixed(2);
+      }
+  
+      // Send the result as the response
+      res.status(200).send({
+        total_profit: totalProfit,
+        total_expenses: totalExpenses
+      });
+    } catch (err) {
+      console.log("Error in fetching profits and expenses for this month:", err);
+      res.status(400).send({ "Error": err.message });
+    }
+  });
+  
+  
+  
+app.get("/profits/all",async(req,res)=>{
+    try{
+        const result=await pool.query("select * from profits")
+        res.status(200).send(result.rows)
+
+    }catch(err){
+        console.log("Error in fetching profits")
+        res.status(400).send(err)
+    }
+})
+
+app.put("/profits/addExpenses",async(req,res)=>{
+    try{
+        const {exes}=req.body
+        const todayDate=await pool.query("select to_char(current_date, 'DD-MM-YYYY') as current_date")
+        const formattedDate=todayDate.rows[0]["current_date"]
+        const response=await pool.query(`update profits set expenses_amount=expenses_amount+$1 where date_of_profit=$2`,[exes,formattedDate])
+        res.status(200).send("Expenses Amount Updated Successfullyy")
+    }catch(err){
+        res.status(400).send({"Error in expenses amount updation":err})
+    }
+
+})
+
+/*
 app.get("*",(req,res)=>{
     res.sendFile(path.join(__dirname,"Client/build/index.html"))
 
 })
-
-
+*/
 app.listen(port,()=>{
     console.log(`Server is running on port http://localhost:${port}`);
 })
