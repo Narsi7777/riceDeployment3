@@ -3,7 +3,7 @@ import "./CustomersList.css";
 import axios from "axios";
 import AllDetails from "../AllDetails";
 import AllCustomerDetails from "../AllCustomerDetails";
-
+import { useNavigate } from "react-router-dom";
 const CustomersList = () => {
   const [customers, setCustomers] = useState([]);
   const [visibleInput, setVisibleInput] = useState(null);
@@ -12,8 +12,9 @@ const CustomersList = () => {
   const [newCustomerButtonClicked, setNewCustomerButton] = useState(false);
   const [allButtonClicked, setAllButton] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); 
-
-  // Fetch customers from backend
+  const [riceBrands,setRiceBrands]=useState("")
+  const [sellingData,setSellingData]=useState({"sellBrand":"","sellQuantity":0,"sellPrice":0})
+  const navigate=useNavigate()
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -23,74 +24,156 @@ const CustomersList = () => {
         console.log("Error fetching customers:", err);
       }
     };
+    const fetchRiceBrands=async()=>{
+      try{
+        const brands=await axios.get("/storage");
+        setRiceBrands(brands.data)
+      }catch(err){
+        console.log("Error fetching customers:", err);
+      }
+    }
     fetchData();
+    fetchRiceBrands();
+    
   }, []);
+  
 
-  // Handle Add Payment button click
+  const handleChange=(event)=>{
+    const {name,value}=event.target
+    setSellingData((prevData)=>(
+      {
+        ...prevData,[name]:value,
+    }
+    ))
+  }
   const handleAddButtonClick = (customerId) => {
     setButtonClick(false);
     setVisibleInput({ customerId, action: "add" });
     setAmountValue("");
   };
 
-  // Handle Remove Payment button click
   const handleRemoveButtonClick = (customerId) => {
     setButtonClick(false);
     setVisibleInput({ customerId, action: "remove" });
     setAmountValue("");
   };
 
-  // Handle OK button click to submit payment
-  const handleOkButtonClick = async () => {
-    if (!amountValue || amountValue < 0) {
-      alert("Please enter a valid amount!");
+  const handleOkButtonClick = async (event) => {
+    event.preventDefault();
+    if (sellingData.sellQuantity<0 || sellingData.sellPrice < 0) {
+      alert("Please enter a valid amount or quantity!");
       return;
     }
-
     const { customerId, action } = visibleInput;
-
-    try {
-      const url =
-        action === "add"
-          ? `/addBalance/${customerId}`
-          : `/removeBalance/${customerId}`;
-      await axios.put(url, { amount: parseInt(amountValue) });
-
-      const response = await axios.get(" /customers");
-      setCustomers(response.data);
-
-      setVisibleInput(null);
-      setAmountValue("");
-    } catch (err) {
-      console.error("Error updating customer balance:", err);
+    if(action==="add"){
+      try {
+        const response = await axios.put(`/updateStorage/${sellingData.sellBrand}/remove`, {
+          addPackets: parseInt(sellingData.sellQuantity),
+        });
+        console.log("Storage updated:", response);
+      } catch (err) {
+        console.log("Error updating storage:", err);
+        alert("Error updating storage");
+        return;
+      }
+    
+      
+      try {
+        if (!customerId || !action) {
+          alert("Missing customer data or action.");
+          return;
+        }
+        const url =`/addBalance/${customerId}`;    
+       
+        const updateResponse = await axios.put(url, {
+          amount: parseInt(sellingData.sellPrice) * parseInt(sellingData.sellQuantity),
+        });
+        console.log("Customer balance updated:", updateResponse);
+    
+      
+        const customersResponse = await axios.get("/customers"); 
+        setCustomers(customersResponse.data);
+    
+      
+        setVisibleInput(null);
+        setAmountValue("");
+      } catch (err) {
+        console.error("Error updating customer balance:", err);
+        alert("Error updating customer balance");
+        return; 
+      }
+      //thirdddd taskkkk
+    //calculating the profittt
+    const boughtBrand=riceBrands.find(item=>item.nameofthebrand===sellingData.sellBrand)
+    const boughtBrandCost=boughtBrand.costofeachpacket
+    const profit=parseFloat(sellingData.sellPrice)-parseFloat(boughtBrandCost)
+    const totalProfit=profit*parseFloat(sellingData.sellQuantity)
+    try{
+      const profitResult=await axios.put(`/profits/addProfit`,{"profit":totalProfit})
+      console.log(profitResult)
+    }catch(err){
+      console.log("error in updating profit",err)
     }
+
+    }else{
+            
+      try {
+        if (!customerId || !action) {
+          alert("Missing customer data or action.");
+          return;
+        }
+        const url =`/removeBalance/${customerId}`;    
+       
+        const updateResponse = await axios.put(url, {
+          amount: parseInt(sellingData.sellPrice),
+        });
+        console.log("Customer balance updated:", updateResponse);
+    
+      
+        const customersResponse = await axios.get("/customers"); 
+        setCustomers(customersResponse.data);
+        
+        setVisibleInput(null);
+        setAmountValue("");
+     
+      } catch (err) {
+        console.error("Error updating customer balance:", err);
+        alert("Error updating customer balance");
+        return; 
+      }
+    
+
+    }
+
+    
+  
+
     setButtonClick(true);
+    
   };
 
-  // Handle adding new customer
+
   const handleNewCustomerSubmit = async (newCustomer) => {
     try {
       const url = "/customers/addCustomer";
       await axios.post(url, newCustomer);
       const response = await axios.get("/customers");
       setCustomers(response.data);
-      setNewCustomerButton(false); // Hide new customer form after submission
+      setNewCustomerButton(false); 
     } catch (err) {
       console.log("Error in Adding New Customer", err);
     }
   };
 
   const handleCancelNewCustomer = () => {
-    setNewCustomerButton(false); // Hide the form if canceled
+    setNewCustomerButton(false); 
   };
 
   const handleNewCustomerButton = () => {
-    setNewCustomerButton(true); // Show new customer form when button clicked
+    setNewCustomerButton(true); 
   };
 
-  const handleAllButton = () => {
-    setAllButton(true); // Show AllDetails when "All" button clicked
-  };
+
 
 
   const handleSearchChange = (e) => {
@@ -102,13 +185,16 @@ const CustomersList = () => {
     customer.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Ensure that customers is always an array before sorting
+ 
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
-    const nameA = a.name ? a.name : ''; // Fallback to empty string if undefined
-    const nameB = b.name ? b.name : ''; // Fallback to empty string if undefined
+    const nameA = a.name ? a.name : ''; 
+    const nameB = b.name ? b.name : ''; 
 
     return nameA.localeCompare(nameB);
   });
+  const handleSellButtonClick=()=>{
+    navigate("/sell")
+  }
 
   return (
     <div className="customers-container">
@@ -117,14 +203,11 @@ const CustomersList = () => {
           <button className="newCustomerButton" onClick={handleNewCustomerButton}>
             Add New Customer
           </button>
+          
         )}
-        {allButtonClicked === false && (
-          <button className="add-button" onClick={handleAllButton}>
-            All
-          </button>
-        )}
+        
       </div>
-
+        <center><button className="add-button" onClick={handleSellButtonClick}>Sellll</button></center>
       <div className="allDetails">
       {allButtonClicked && <AllDetails></AllDetails>}
       {allButtonClicked && <AllCustomerDetails></AllCustomerDetails>}
@@ -168,7 +251,7 @@ const CustomersList = () => {
             value={searchQuery}
             onChange={handleSearchChange}
           />
-
+      
           {sortedCustomers.map((item, index) => (
             <div className="customer-box" key={index}>
               <h2>{item.name}</h2>
@@ -194,23 +277,54 @@ const CustomersList = () => {
                     >
                       Remove Payment
                     </button>
+                   
                   </div>
                 )}
 
                 {visibleInput?.customerId === item.customer_id && (
                   <div>
-                    <input
+                   <form onSubmit={handleOkButtonClick}>
+                    {visibleInput["action"]==="add"&&<div>
+                      <label htmlFor="options">Choose Rice Brand</label>
+                    <select
+                    id="options"
+                    name="sellBrand"
+                    required
+                    value={sellingData.sellBrand}
+                    onChange={handleChange}
+                    >
+                      <option value="" disabled>Select An Option</option>
+                      {
+                        riceBrands.map((item,index)=>(
+                        <option key={index} value={item.nameofthebrand}>{item.nameofthebrand}({item.quantityinpackets})({item.costofeachpacket})</option>
+                        ))
+                      }
+                      </select>
+                      <label htmlFor="quantity">Enter Quantity</label>
+                      <input 
                       type="number"
-                      min="1"
-                      placeholder="Enter amount"
-                      value={amountValue}
-                      onChange={(e) => setAmountValue(e.target.value)}
-                    />
-                    <button className="ok-button" onClick={handleOkButtonClick}>
-                      OK
-                    </button>
+                      id="quantity"
+                      name="sellQuantity"
+                      value={riceBrands.sellQuantity}
+                      onChange={handleChange}
+                      required
+                      ></input>  
+                    </div>}
+                     <label htmlFor="price">Enter Selling Price</label>
+                      <input 
+                      type="number"
+                      id="price"
+                      name="sellPrice"
+                      value={riceBrands.sellPrice}
+                      onChange={handleChange}
+                      required
+                      ></input>
+
+                    <button type="submit">Sumbit</button>
+                   </form>
                   </div>
-                )}
+                )
+                }
               </div>
             </div>
           ))}
@@ -219,5 +333,4 @@ const CustomersList = () => {
     </div>
   );
 };
-
 export default CustomersList;

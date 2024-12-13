@@ -1,0 +1,179 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+
+  .mainDiv {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 40px auto;
+    width: 90%;
+    max-width: 1200px;
+    gap: 30px; 
+    box-sizing: border-box;
+  }
+  
+ 
+  .box {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  .FirstDiv {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .FirstDiv h1 {
+    text-align: center;
+    color: #333;
+    font-size: 1.8rem;
+  }
+  
+  .FirstDiv .box {
+    margin-bottom: 20px;
+  }
+  
+  .FirstDiv h4 {
+    margin: 10px 0;
+  }
+  
+  .FirstDiv .box span {
+    font-size: 1.25rem;
+  }
+  
+
+  .SecondDiv {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .SecondDiv h1 {
+    text-align: center;
+    color: #333;
+    font-size: 1.8rem;
+  }
+  
+  .SecondDiv .box {
+    margin-top: 20px;
+  }
+  
+  .SecondDiv h4 {
+    margin: 10px 0;
+  }
+  
+  .SecondDiv .box span {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+ 
+  .AddExpensesButton,
+  .okButton {
+    padding: 12px;
+    margin-top: 20px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  
+  .AddExpensesButton {
+    background-color: #ffa500;
+  }
+  
+  .AddExpensesButton:hover,
+  .okButton:hover {
+    background-color: #45a049;
+  }
+  
+
+  @media screen and (max-width: 768px) {
+    .mainDiv {
+      flex-direction: column; 
+      align-items: center;
+    }
+  
+    .FirstDiv,
+    .SecondDiv {
+      width: 90%; 
+      margin-bottom: 20px;
+    }
+  }
+  .ThirdDiv {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .ThirdDiv h1 {
+    text-align: center;
+    color: #333;
+    font-size: 1.8rem;
+  }
+  
+  .ThirdDiv .box {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ThirdDiv h4 {
+    margin: 10px 0;
+  }
+  
+  .ThirdDiv .box span {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  @media screen and (max-width: 768px) {
+    .mainDiv {
+      flex-direction: column; 
+      align-items: center;
+    }
+  
+    .FirstDiv,
+    .SecondDiv,
+    .ThirdDiv {
+      width: 90%; 
+      margin-bottom: 20px;
+    }
+  }
+  

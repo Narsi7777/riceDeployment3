@@ -20,11 +20,6 @@ const MainPage = () => {
 
   return (
     <div className="main-page">
-      <div className="buttons">
-        <button onClick={handleCustomersClick}>Customers</button>
-        <button onClick={handleStorageClick}>Storage</button>
-      </div>
-
       <div className="content">
         {showCustomers && <CustomersList />}
         {showStorage && <StorageList />}

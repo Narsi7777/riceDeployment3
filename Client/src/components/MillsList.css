@@ -1,19 +1,23 @@
-
-.details{
+.millLists {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh; 
+    padding: 20px;
+    text-align: center; 
 }
-.customers-container {
+
+.millLists-container {
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    text-align: center;
-  }
-  
-  .customer-box {
-    border: 2px solid #e60000; 
+    align-items: center; 
+}
+
+.mill-box {
+    border: 2px solid #4CAF50; 
     padding: 20px;
     border-radius: 10px;
     width: 300px;
@@ -22,51 +26,47 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-  }
-  
-  .customer-box h2 {
+}
+
+.mill-box h2 {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
-  }
-  
-  .customer-box p {
+}
+
+.mill-box p {
     font-size: 14px;
     margin: 5px 0;
-  }
-  
-  .customer-box .button-container {
+}
+
+.mill-box .button-container {
     display: flex;
     justify-content: space-between;
-  }
-  
-  .customer-box input {
+}
+
+.mill-box input {
     width: 100%;
     padding: 8px;
     margin-top: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-  }
-  
+}
 
-  
-  
-  
-  .new-customer-form {
+.new-mill-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
-  
-  .new-customer-form input {
+}
+
+.new-mill-form input {
     padding: 8px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 5px;
     width: 100%;
-  }
-  
-  .new-customer-form button {
+}
+
+.new-mill-form button {
     background-color: #4CAF50; 
     color: white;
     border: none;
@@ -74,30 +74,30 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-  }
-  
-  .new-customer-form button:hover {
+}
+
+.new-mill-form button:hover {
     background-color: #45a049;
-  }
-  
-  .new-customer button {
-    background-color: #008CBA;
+}
+
+.new-mill button {
+    background-color: #008CBA; 
     color: white;
-  }
-  
-  .new-customer button:hover {
+}
+
+.new-mill button:hover {
     background-color: #007B9A;
-  }
-  
-  .new-customer-form button[type="button"] {
+}
+
+.new-mill-form button[type="button"] {
     background-color: #f44336;
-  }
-  
-  .new-customer-form button[type="button"]:hover {
+}
+
+.new-mill-form button[type="button"]:hover {
     background-color: #d32f2f;
-  }
-  
-  .add-button {
+}
+
+.add-button {
     width: 48%;
     background-color: #4CAF50; 
     color: white; 
@@ -109,13 +109,13 @@
 }
 
 .add-button:hover {
-    background-color: #45a049; 
+    background-color: #45a049;
 }
 
 .remove-button {
     width: 48%;
-    background-color: red; 
-    color: white; 
+    background-color: red;
+    color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
@@ -127,18 +127,17 @@
     background-color: #cc0000; 
 }
 
-
-  .ok-button {
+.ok-button {
     width: 100%;
     background-color: #008CBA;
     color: white;
-  }
-  
-  .ok-button:hover {
+}
+
+.ok-button:hover {
     background-color: #007B9A;
-  }
-  
-  .search-box {
+}
+
+.search-box {
     padding: 10px;
     font-size: 16px;
     margin-bottom: 20px;
@@ -147,8 +146,8 @@
     width: 100%;
     max-width: 300px;
     margin: 10px auto;
-  }
-  
-  .allDetails{
+}
+
+.allDetails {
     display: flex;
-  }
+}
