@@ -12,7 +12,7 @@ const CustomersList = () => {
   const [newCustomerButtonClicked, setNewCustomerButton] = useState(false);
   const [allButtonClicked, setAllButton] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); 
-  const [riceBrands,setRiceBrands]=useState("")
+  const [riceBrands,setRiceBrands]=useState([])
   const [sellingData,setSellingData]=useState({"sellBrand":"","sellQuantity":0,"sellPrice":0})
   const navigate=useNavigate()
   useEffect(() => {
