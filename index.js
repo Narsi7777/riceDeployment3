@@ -331,41 +331,48 @@ app.get("/mill/allAmount",async(req,res)=>{
     }
 })
 
+app.put("/profits/addProfit", async (req, res) => {
+    const { profit } = req.body;
 
-    app.put("/profits/addProfit",async(req,res)=>{
-        const {profit}=req.body
+    try {
+        // Get the current date in the default 'YYYY-MM-DD' format
+        const todayDate = await pool.query("select current_date as current_date");
 
-        try{
-            const todayDate=await pool.query("select to_char(current_date, 'DD-MM-YYYY') as current_date")
-            
-            const formattedDate=todayDate.rows[0]["current_date"]
-            const result=await pool.query(`select * from profits where date_of_profit=$1`,[formattedDate])
-            if (result.rowCount > 0) {
-               try{
-                    const result2=await pool.query(`update profits set profit_amount=profit_amount+$1 where date_of_profit=$2`,[parseFloat(profit),formattedDate])
-                    res.status(200).send("Updation successful into profits table")
-                }catch(err){
-                console.log("Error in Updationd Into Profits",err)
-                res.status(400).send(err)
-               }
-                
-            } else {
-                try{
-                    const resss=await pool.query(`insert into profits (date_of_profit,profit_amount) values ($1,$2)`,[formattedDate,parseFloat(profit)])
-                    res.status(200).send("insertion successful into profits table")
-                }catch(err){
-                    console.log("Error in Inserting Into Profits",err)
-                    res.status(400).send(err)
-                }
+        const formattedDate = todayDate.rows[0]["current_date"];
+        const result = await pool.query("select * from profits where date_of_profit=$1", [formattedDate]);
+
+        if (result.rowCount > 0) {
+            try {
+                // Update the profit for the current date
+                const result2 = await pool.query(
+                    "update profits set profit_amount = profit_amount + $1 where date_of_profit = $2",
+                    [parseFloat(profit), formattedDate]
+                );
+                res.status(200).send("Updation successful into profits table");
+            } catch (err) {
+                console.log("Error in Updation Into Profits", err);
+                res.status(400).send(err);
             }
-
-        
-    }catch(err){
-        console.log("Error in adding profits",err)
-        res.status(400).send({"Error in adding profits":err})
+        } else {
+            try {
+                // Insert a new record for the profit
+                const resss = await pool.query(
+                    "insert into profits (date_of_profit, profit_amount) values ($1, $2)",
+                    [formattedDate, parseFloat(profit)]
+                );
+                res.status(200).send("Insertion successful into profits table");
+            } catch (err) {
+                console.log("Error in Inserting Into Profits", err);
+                res.status(400).send(err);
+            }
+        }
+    } catch (err) {
+        console.log("Error in adding profits", err);
+        res.status(400).send({ "Error in adding profits": err });
     }
+});
 
-})
+
 app.get("/profits/today",async(req,res)=>{
     try{
         const result=await pool.query("select * from profits where date_of_profit=current_date")
@@ -392,11 +399,10 @@ app.get("/profits/date", async (req, res) => {
   
 app.get("/profits/month", async (req, res) => {
     try {
-      // Get the start and end dates of the current month
+     
       const startDate = await pool.query("SELECT TO_CHAR(DATE_TRUNC('month', CURRENT_DATE), 'YYYY-MM-DD') AS start_date");
       const endDate = await pool.query("SELECT TO_CHAR(DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day', 'YYYY-MM-DD') AS end_date");
   
-      // Query to fetch both the total profit and total expenses for the current month
       const result = await pool.query(
         `SELECT 
           SUM(profit_amount) AS total_profit, 
@@ -406,11 +412,10 @@ app.get("/profits/month", async (req, res) => {
         [startDate.rows[0].start_date, endDate.rows[0].end_date]
       );
   
-      // Extract the total profit and expenses from the result
       let totalProfit = result.rows[0].total_profit;
       let totalExpenses = result.rows[0].total_expenses;
   
-      // Handle null values (if no profit or expenses for the current month)
+     
       if (totalProfit === null) {
         totalProfit = 0.00;
       } else {
@@ -423,7 +428,7 @@ app.get("/profits/month", async (req, res) => {
         totalExpenses = parseFloat(totalExpenses).toFixed(2);
       }
   
-      // Send the result as the response
+ 
       res.status(200).send({
         total_profit: totalProfit,
         total_expenses: totalExpenses
@@ -436,7 +441,7 @@ app.get("/profits/month", async (req, res) => {
   
   
   
-app.get("/profits/all",async(req,res)=>{
+app.get("/profits",async(req,res)=>{
     try{
         const result=await pool.query("select * from profits")
         res.status(200).send(result.rows)
@@ -446,22 +451,41 @@ app.get("/profits/all",async(req,res)=>{
         res.status(400).send(err)
     }
 })
-app.get("/profits", (req, res) => {
-    res.redirect("/profits/all");
+
+
+app.put("/profits/addExpenses", async (req, res) => {
+    try {
+        
+        const { exes } = req.body;
+        if (!exes || isNaN(exes)) {
+            return res.status(400).json({ error: "Invalid or missing expenses amount" });
+        }
+
+        const todayDate = await pool.query(
+            "SELECT TO_CHAR(current_date, 'YYYY-MM-DD') AS current_date"
+        );
+        const formattedDate = todayDate.rows[0]["current_date"];
+
+     
+        const response = await pool.query(
+            "UPDATE profits SET expenses_amount = expenses_amount + $1 WHERE date_of_profit = $2",
+            [parseFloat(exes), formattedDate]
+        );
+
+    
+        if (response.rowCount === 0) {
+            return res.status(404).json({
+                error: "No profit record found for today's date. Please ensure the date exists.",
+            });
+        }
+
+        res.status(200).json({ message: "Expenses amount updated successfully" });
+    } catch (err) {
+        console.error("Error in expenses amount updation:", err);
+        res.status(500).json({ error: "Internal server error", details: err.message });
+    }
 });
 
-app.put("/profits/addExpenses",async(req,res)=>{
-    try{
-        const {exes}=req.body
-        const todayDate=await pool.query("select to_char(current_date, 'DD-MM-YYYY') as current_date")
-        const formattedDate=todayDate.rows[0]["current_date"]
-        const response=await pool.query(`update profits set expenses_amount=expenses_amount+$1 where date_of_profit=$2`,[exes,formattedDate])
-        res.status(200).send("Expenses Amount Updated Successfullyy")
-    }catch(err){
-        res.status(400).send({"Error in expenses amount updation":err})
-    }
-
-})
 
 /*
 app.get("*",(req,res)=>{
