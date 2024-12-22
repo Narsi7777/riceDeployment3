@@ -170,7 +170,7 @@ app.get('/customers/allDetails',async(req,res)=>{
 app.get("/customers",async(req,res)=>{
     try{
         const response=await pool.query("select * from customers")
-        console.log(response.rows)
+        //console.log(response.rows)
         res.status(200).send(response.rows)
     }catch(err){
         console.log("error in retriving custoimer data ",err)
