@@ -144,7 +144,7 @@ app.get("/storage/allDetails",async(req,res)=>{
             "totalPackets":result.rows[0]["totalpackets"],
             "totalCost":result2.rows[0]["totalcost"]
         }
-        console.log("cost is",temp["totalCost"])
+        //console.log("cost is",temp["totalCost"])
         return res.status(200).send(temp)
 
     }catch(err){
@@ -157,7 +157,7 @@ app.get('/customers/allDetails',async(req,res)=>{
     try{
         const result=await pool.query("select sum(outstanding_balance) from customers")
         const total=result.rows[0]["sum"]
-        console.log(total)
+        //console.log(total)
         return res.status(200).send({"totalAmount":total})
 
     }
@@ -485,6 +485,154 @@ app.put("/profits/addExpenses", async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: err.message });
     }
 });
+
+app.get('/todaysDate', async (req, res) => {
+    try {
+        const response = await pool.query(
+            "SELECT (current_timestamp AT TIME ZONE 'Asia/Kolkata') AS current_date"
+          );
+          
+          const currentDate = new Date(response.rows[0].current_date).toISOString().split("T")[0];
+          res.status(200).json({ current_date: currentDate });
+          
+    } catch (err) {
+      res.status(400).send({ error: err });
+    }
+  });
+  
+
+app.get('/custNameAddress',async(req,res)=>{
+    const {customerId}=req.query
+    try{
+        const result=await pool.query(`SELECT name AS "customerName", address AS "custAddr" FROM customers WHERE customer_id=$1`,[customerId])
+        console.log("name and address retrived",result.rows[0])
+        res.status(200).send(result.rows[0])
+    }
+    catch(errr){
+        console.log("you got error in getting name ad addtress")
+        res.status(400).send({"error":errr})
+    }
+})
+
+app.put('/addTransaction',async(req,res)=>{
+    const {
+        customer_id,
+        transaction_date,
+        amount,
+        transaction_type,
+        customer_name,
+        address,
+        sellingbrand,
+        sellingquantity,
+        boughtprize,
+        sellingprize,
+      } = req.body;
+    
+      const sql = `
+        INSERT INTO transactions (
+          customer_id,
+          transaction_date,
+          amount,
+          transaction_type,
+          customer_name,
+          address,
+          sellingbrand,
+          sellingquantity,
+          boughtprize,
+          sellingprize
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+      `;
+    
+      const values = [
+        customer_id,
+        transaction_date,
+        amount,
+        transaction_type,
+        customer_name,
+        address,
+        sellingbrand,
+        sellingquantity,
+        boughtprize,
+        sellingprize,
+      ];
+    
+      try {
+        const result = await pool.query(sql, values);
+        console.log("Transaction inserted successfully:", result.rows[0]);
+        res.status(201).send(result.rows[0]);
+      } catch (error) {
+        console.error("Error inserting transaction:", error);
+        res.status(400).send({ error: "Failed to insert transaction" });
+      }
+    });
+
+app.put('/removeTransaction',async(req,res)=>{
+        const {
+            customer_id,
+            transaction_date,
+            amount,
+            transaction_type,
+            customer_name,
+            address
+          } = req.body;
+        
+          const sql = `
+            INSERT INTO transactions (
+              customer_id,
+              transaction_date,
+              amount,
+              transaction_type,
+              customer_name,
+              address
+            ) VALUES ($1, $2, $3, $4, $5, $6);
+          `;
+        
+          const values = [
+            customer_id,
+            transaction_date,
+            amount,
+            transaction_type,
+            customer_name,
+            address
+          ];
+        
+          try {
+            const result = await pool.query(sql, values);
+            console.log("Transaction inserted successfully:", result.rows[0]);
+            res.status(201).send(result.rows[0]);
+          } catch (error) {
+            console.error("Error inserting transaction:", error);
+            res.status(400).send({ error: "Failed to insert transaction" });
+          }
+});
+
+app.post("/addedDetails",async(req,res)=>{
+    const {formattedDate}=req.body
+    // console.log(formattedDate)
+    try{
+        const ress=await pool.query(`select * from transactions where transaction_date=$1 and transaction_type='add'`,[formattedDate])
+        // console.log("fetching successful",ress.rows)
+        res.status(200).send(ress.rows)
+    }
+    catch(err){
+        console.log("error in getting todays added details",err)
+        res.status(400).send({"errror":err})
+    }
+})
+
+app.post("/removedDetails",async(req,res)=>{
+    const {formattedDate}=req.body
+    // console.log(formattedDate)
+    try{
+        const ress=await pool.query(`select * from transactions where transaction_date=$1 and transaction_type='remove'`,[formattedDate])
+        // console.log("fetching successful",ress.rows)
+        res.status(200).send(ress.rows)
+    }
+    catch(err){
+        console.log("error in getting todays Removedd details",err)
+        res.status(400).send({"errror":err})
+    }
+})
 
 
 /*

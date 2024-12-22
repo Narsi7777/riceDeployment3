@@ -75,3 +75,9 @@ create profits(
 
 ALTER TABLE profits 
 ALTER COLUMN expenses_amount SET DEFAULT 0;
+
+
+drop trigger transaction_after_update on customers
+
+
+outsider customer id
