@@ -86,7 +86,7 @@ const SellForm = () => {
     
     try{
       const transResult=await axios.put('/addTransaction',{
-        customer_id: process.env.custId,
+        customer_id: 84,
         transaction_date: currentDate,
         amount: parseInt(sellingData.sellPrice) * parseInt(sellingData.sellQuantity),
         transaction_type: "add",
@@ -99,7 +99,7 @@ const SellForm = () => {
       })
       console.log("transaction result",transResult.data)
     }catch(err){
-      console.log("error in updating transactions table")
+      console.log("error in updating transactions table",err)
       return;
     }
 
