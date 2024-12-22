@@ -4,14 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 const SellForm = () => {
     const navigate=useNavigate()
-  const [riceBrands, setRiceBrands] = useState([]); // Holds available rice brands
+  const [riceBrands, setRiceBrands] = useState([]); 
   const [sellingData, setSellingData] = useState({
     sellBrand: "",
     sellQuantity: 0,
     sellPrice: 0,
-  }); // Holds the data for the sale form
-
-  // Fetch rice brands on component mount
+  }); 
   useEffect(() => {
     const fetchRiceBrands = async () => {
       try {
@@ -24,7 +22,6 @@ const SellForm = () => {
     fetchRiceBrands();
   }, []);
 
-  // Handle changes in the form fields
   const handleChange = (event) => {
     const { name, value } = event.target;
     setSellingData((prevData) => ({
@@ -33,7 +30,7 @@ const SellForm = () => {
     }));
   };
 
-  // Handle form submission
+
   const handleOkButtonClick = async (event) => {
     event.preventDefault();
 
@@ -42,8 +39,16 @@ const SellForm = () => {
       alert("Please enter a valid amount or quantity!");
       return;
     }
+    let currentDate=0;
+    try{
+      const resultX=await axios.get("/todaysDate")
+      currentDate=resultX.data['current_date']
+      console.log("todays date is ",currentDate)
 
-    // Update storage
+    }catch(err){
+      console.log("error in getting current date or name",err)
+    }
+   
     try {
       const response = await axios.put(
         `/updateStorage/${sellingData.sellBrand}/remove`,
@@ -76,6 +81,29 @@ const SellForm = () => {
     } catch (err) {
       console.log("error in updating profit", err);
     }
+
+
+    
+    try{
+      const transResult=await axios.put('/addTransaction',{
+        customer_id: process.env.custId,
+        transaction_date: currentDate,
+        amount: parseInt(sellingData.sellPrice) * parseInt(sellingData.sellQuantity),
+        transaction_type: "add",
+        customer_name: "outsider",
+        address: "null",
+        sellingbrand: sellingData.sellBrand,
+        sellingquantity: parseInt(sellingData.sellQuantity),
+        boughtprize: parseFloat(boughtBrandCost),
+        sellingprize: parseFloat(sellingData.sellPrice),
+      })
+      console.log("transaction result",transResult.data)
+    }catch(err){
+      console.log("error in updating transactions table")
+      return;
+    }
+
+
     navigate("/")
   };
 

@@ -58,6 +58,12 @@ const CustomersList = () => {
     setAmountValue("");
   };
 
+  const handleNormalAddButtonClick=(customerId)=>{
+    setButtonClick(false);
+    setVisibleInput({ customerId, action: "normalAdd" });
+    setAmountValue("");
+  }
+
   const handleOkButtonClick = async (event) => {
     event.preventDefault();
     if (sellingData.sellQuantity<0 || sellingData.sellPrice < 0) {
@@ -65,6 +71,27 @@ const CustomersList = () => {
       return;
     }
     const { customerId, action } = visibleInput;
+    let currentDate=0;
+    let customerName="";
+    let custAddr=""
+    try{
+      const resultX=await axios.get("/todaysDate")
+      currentDate=resultX.data['current_date']
+      console.log("todays date is ",currentDate)
+      const resultss=await axios.get('/custNameAddress',{
+        params: { customerId }, 
+      })
+
+      if(resultss&&resultss.data){
+        ({customerName,custAddr}=resultss.data)
+        console.log("name ",customerName)
+        console.log("address",custAddr)
+      }else{
+        console.log("nullll")
+      }
+    }catch(err){
+      console.log("error in getting current date or name",err)
+    }
     if(action==="add"){
       try {
         const response = await axios.put(`/updateStorage/${sellingData.sellBrand}/remove`, {
@@ -102,6 +129,9 @@ const CustomersList = () => {
         alert("Error updating customer balance");
         return; 
       }
+       
+    
+
       //thirdddd taskkkk
     //calculating the profittt
     const boughtBrand=riceBrands.find(item=>item.nameofthebrand===sellingData.sellBrand)
@@ -115,7 +145,29 @@ const CustomersList = () => {
       console.log("error in updating profit",err)
     }
 
-    }else{
+
+    try{
+      const transResult=await axios.put('/addTransaction',{
+        customer_id: customerId,
+        transaction_date: currentDate,
+        amount: parseInt(sellingData.sellPrice) * parseInt(sellingData.sellQuantity),
+        transaction_type: "add",
+        customer_name: customerName,
+        address: custAddr,
+        sellingbrand: sellingData.sellBrand,
+        sellingquantity: parseInt(sellingData.sellQuantity),
+        boughtprize: parseFloat(boughtBrandCost),
+        sellingprize: parseFloat(sellingData.sellPrice),
+      })
+      console.log("transaction result",transResult.data)
+    }catch(err){
+      console.log("error in updating transactions table")
+      return;
+    }
+
+    //add button ending
+    }
+    else if(action==="remove"){
             
       try {
         if (!customerId || !action) {
@@ -128,13 +180,13 @@ const CustomersList = () => {
           amount: parseInt(sellingData.sellPrice),
         });
         console.log("Customer balance updated:", updateResponse);
-    
-      
-        const customersResponse = await axios.get("/customers"); 
+        const customersResponse = await axios.get("/customers");
+
         setCustomers(customersResponse.data);
         
         setVisibleInput(null);
         setAmountValue("");
+
      
       } catch (err) {
         console.error("Error updating customer balance:", err);
@@ -142,7 +194,50 @@ const CustomersList = () => {
         return; 
       }
     
+      try{
+      const transResult=await axios.put('/removeTransaction',{
+        customer_id: customerId,
+        transaction_date: currentDate,
+        amount: parseInt(sellingData.sellPrice),
+        transaction_type: "remove",
+        customer_name: customerName,
+        address: custAddr
+      })
+        console.log("transaction result",transResult.data)
+    }catch(err){
+      console.log("error in updating transactions table")
+      return;
+    }
 
+
+    }
+    else{
+      //normal adding 
+
+      try {
+        if (!customerId || !action) {
+          alert("Missing customer data or action.");
+          return;
+        }
+        const url =`/addBalance/${customerId}`;    
+       
+        const updateResponse = await axios.put(url, {
+          amount: parseInt(sellingData.sellPrice),
+        });
+        console.log("Customer balance updated:", updateResponse);
+        const customersResponse = await axios.get("/customers");
+
+        setCustomers(customersResponse.data);
+        
+        setVisibleInput(null);
+        setAmountValue("");
+
+     
+      } catch (err) {
+        console.error("Error updating customer balance: at normal add", err);
+        alert("Error updating customer balance");
+        return; 
+      }
     }
 
     
@@ -151,8 +246,6 @@ const CustomersList = () => {
     setButtonClick(true);
     
   };
-
-
   const handleNewCustomerSubmit = async (newCustomer) => {
     try {
       const url = "/customers/addCustomer";
@@ -277,6 +370,12 @@ const CustomersList = () => {
                     >
                       Remove Payment
                     </button>
+                    <button
+                    className="add-button"
+                    onClick={()=>{
+                      handleNormalAddButtonClick(item.customer_id)
+                    }}
+                    >Normal add</button>
                    
                   </div>
                 )}
