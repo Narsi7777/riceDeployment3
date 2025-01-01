@@ -78,6 +78,82 @@ ALTER COLUMN expenses_amount SET DEFAULT 0;
 
 
 drop trigger transaction_after_update on customers
-
-
 outsider customer id
+
+
+//need to update transactions table
+
+
+
+
+//updated
+
+CREATE TABLE IF NOT EXISTS public.storage (
+    nameofthebrand VARCHAR,
+    quantityinpackets INTEGER,
+    costofeachpacket INTEGER,
+    location VARCHAR
+);
+
+
+CREATE TABLE IF NOT EXISTS public.customers (
+    customer_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    shop_name VARCHAR(100),
+    address VARCHAR(50),
+    phone_number VARCHAR(100),
+    outstanding_balance NUMERIC(10,2) DEFAULT 0.00
+);
+
+
+CREATE TABLE IF NOT EXISTS public.mills (
+    mill_id SERIAL PRIMARY KEY,
+    mill_name VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
+    amount_due NUMERIC(10,2)
+);
+
+
+CREATE TABLE IF NOT EXISTS public.profits (
+    profit_id SERIAL PRIMARY KEY,
+    date_of_profit DATE,
+    profit_amount NUMERIC(10,2),
+    expenses_amount NUMERIC(10,2) DEFAULT 0
+);
+
+
+CREATE TABLE IF NOT EXISTS public.transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    customer_id INTEGER NOT NULL,
+    transaction_date DATE DEFAULT CURRENT_DATE,
+    amount NUMERIC(10,2) NOT NULL,
+    transaction_type VARCHAR(6) CHECK (transaction_type IN ('add', 'remove')),
+    customer_name VARCHAR(255),
+    address VARCHAR(100),
+    sellingbrand VARCHAR(100),
+    sellingquantity INTEGER,
+    boughtprize NUMERIC(10,2),
+    sellingprize NUMERIC(10,2),
+    CONSTRAINT fk_customer FOREIGN KEY (customer_id)
+        REFERENCES public.customers (customer_id)
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS public.mill_transactions (
+    mill_transaction_id SERIAL PRIMARY KEY,
+    mill_id INTEGER NOT NULL,
+    transaction_date DATE DEFAULT CURRENT_DATE,
+    transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type IN ('pay', 'buy')),
+    amount NUMERIC(10,2) NOT NULL,
+    rice_brand VARCHAR(100),  -- New column to store the rice brand
+    rice_quantity INTEGER,
+    rice_price NUMERIC(10,2),
+    description VARCHAR(255),
+    CONSTRAINT fk_mill FOREIGN KEY (mill_id)
+        REFERENCES public.mills (mill_id)
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
+

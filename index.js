@@ -634,6 +634,39 @@ app.post("/removedDetails",async(req,res)=>{
     }
 })
 
+app.put("/mill/addNewPackets",async(req,res)=>{
+    const {packetsData}=req.body
+    // console.log(packetsData)
+    console.log("packetsData:", packetsData);
+
+    const values = [
+        parseInt(packetsData.millId, 10),                 
+        'buy',                                             
+        parseInt(packetsData.boughtQuantity, 10) *         
+        parseInt(packetsData.costOfEachPacket),
+        packetsData.brandName || null,                     
+        parseInt(packetsData.boughtQuantity, 10) || null,  
+        parseFloat(packetsData.costOfEachPacket) || null   
+    ];
+    try{
+        const result=await pool.query(`insert into mill_transactions (mill_id,transaction_type,amount,rice_brand,rice_quantity,rice_price) values($1,$2,$3,$4,$5,$6)`,values)
+        res.status(200).send("Inserted Into Mills Transactions..")
+    }catch(error){
+        res.status(400).send({err:error})
+    }
+    
+})
+
+app.put("/mill/removeMoney",async(req,res)=>{
+    const {amount,millID}=req.body
+    try{
+    const result=await pool.query("insert into mill_transactions (mill_id,transaction_type,amount) values ($1,$2,$3)",[parseInt(millID),'pay',parseInt(amount)])
+    res.status(200).send("Insertion Successful")
+    }
+    catch(err){
+        res.status(400).send({"err":err})
+    }
+})
 
 /*
 app.get("*",(req,res)=>{
