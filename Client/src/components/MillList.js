@@ -52,9 +52,18 @@ const MillsList = () => {
 
       const millsResponse = await axios.get("/mill/all");
       setMills(millsResponse.data);
-
       setVisibleInput(null);
       setAmountValue("");
+      try{
+        if(action==='remove'){
+          //update mill transactions
+          const result2=await axios.put('/mill/removeMoney',{amount:parseInt(amountValue),millID:millId})
+          console.log("millTransactions Updatedd (Removeee)")
+        }
+      }catch(err){
+        console.log("errorrr",err)
+      }
+      
     } catch (err) {
       console.error("Error updating mill balance:", err);
       alert("Error updating mill balance");
