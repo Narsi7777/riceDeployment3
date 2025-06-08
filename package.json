@@ -20,6 +20,7 @@
     "gopd": "^1.2.0",
     "mangodb": "^1.0.0",
     "mongodb": "^6.11.0",
+    "mysql": "^2.18.1",
     "pg": "^8.13.1"
   },
   "devDependencies": {
