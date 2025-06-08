@@ -7,6 +7,7 @@ const port=process.env.PORT||3000
 
 
 
+
 app.use(cors())
 app.use(express.json())
 //app.use(express.static("./Client/build"))
@@ -674,6 +675,102 @@ app.get("*",(req,res)=>{
 
 })
 */
+
+//chat  bot api
+const fs=require("fs")
+const mysql=require("mysql")
+const {GoogleGenerativeAI}=require("@google/generative-ai")
+const { error } = require('console')
+const genAI = new GoogleGenerativeAI("AIzaSyCUZpau1yt8qLV7Z85WYLFQaiCQe2nb898");
+const fetch = require("node-fetch");
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
+
+const OPENROUTER_API_KEY = "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";
+
+app.post("/api/chatbot", async (req, res) => {
+  const userQuestion = req.body.query;
+  const schema = fs.readFileSync("dbSchema.txt", "utf8");
+
+const prompt = `You are an intelligent SQL generator bot. Based on the schema below and the user's question, generate a valid SQL query for a PostgreSQL database.
+
+Database Schema:
+${schema}
+
+Instructions:
+- Use PostgreSQL syntax only (NOT MySQL).
+- For date filtering, use EXTRACT(MONTH FROM column) and EXTRACT(YEAR FROM column).
+- For name filtering, use: LOWER(name) LIKE LOWER('%<name>%')
+- Return only the SQL query. No explanations or markdown.
+
+User Question: ${userQuestion}`;
+
+
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.2
+      })
+    });
+
+    const completion = await response.json();
+    const sql = completion.choices[0].message.content.trim();
+
+    pool.query(sql, async (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message, sql });
+      }
+
+      const firstResponse = results.rows || results;
+
+      const prompt2 = `You are a helpful assistant. A user asked the following question: "${userQuestion}".
+
+We generated and ran this SQL query to get the data: ${sql}
+
+Here is the data returned: ${JSON.stringify(firstResponse)}
+
+Based on this data, provide a clear and direct answer to the user's question. Do not explain the SQL query or describe the table structure. Just answer the user's question using the data provided. `;
+
+
+      const response2 = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt2 }],
+          temperature: 0.2
+        })
+      });
+      console.log("Response from OpenRouter:", response2.status, response2.statusText);
+      const finalCompletion = await response2.json();
+      const answer = finalCompletion.choices[0].message.content.trim();
+
+      return res.json({
+        sql,
+        message: "Query executed successfully",
+        response: answer
+      });
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong", details: err.message });
+  }
+});
+
+
+
+//end of chatbot api    
 app.listen(port,()=>{
     console.log(`Server is running on port http://localhost:${port}`);
 })
