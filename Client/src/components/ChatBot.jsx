@@ -72,7 +72,7 @@ const ChatBot = () => {
         } catch (error) {
             setMessages((prev) => [
                 ...prev,
-                { sender: "bot", text: "Sorry, there was an error. Please try again." }
+                { sender: "bot", text: `Sorry, there was an error. Please try again.${error}` }
             ]);
           
         }

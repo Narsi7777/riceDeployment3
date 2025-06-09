@@ -1,0 +1,49 @@
+Table: customers
+- customer_id (integer, PRIMARY KEY, NOT NULL, auto-increment)
+- outstanding_balance (numeric, nullable, default 0.00)
+- name (varchar, NOT NULL)
+- shop_name (varchar, nullable)
+- address (varchar, nullable)
+- phone_number (varchar, nullable)
+
+Table: mill_transactions
+- mill_transaction_id (integer, PRIMARY KEY, NOT NULL, auto-increment)
+- mill_id (integer, NOT NULL)
+- transaction_date (date, nullable, default CURRENT_DATE)
+- amount (numeric, NOT NULL)
+- rice_quantity (integer, nullable)
+- rice_price (numeric, nullable)
+- transaction_type (varchar, NOT NULL)
+- description (varchar, nullable)
+- rice_brand (varchar, nullable)
+
+Table: mills
+- mill_id (integer, PRIMARY KEY, NOT NULL, auto-increment)
+- amount_due (numeric, nullable)
+- mill_name (varchar, NOT NULL)
+- location (varchar, nullable)
+
+Table: profits
+- profit_id (integer, PRIMARY KEY, NOT NULL, auto-increment)
+- date_of_profit (date, nullable)
+- profit_amount (numeric, nullable)
+- expenses_amount (numeric, nullable, default 0)
+
+Table: rice_brands
+- quantityinpackets (integer, nullable)
+- costofeachpacket (integer, nullable)
+- nameofthebrand (varchar, nullable)
+- location (varchar, nullable)
+
+Table: transactions
+- transaction_id (integer, PRIMARY KEY, NOT NULL, auto-increment)
+- customer_id (integer, NOT NULL)
+- transaction_date (date, nullable, default CURRENT_DATE)
+- amount (numeric, NOT NULL)
+- sellingquantity (integer, nullable)
+- boughtprize (numeric, nullable)
+- sellingprize (numeric, nullable)
+- sellingbrand (varchar, nullable)
+- transaction_type (varchar, nullable)
+- customer_name (varchar, nullable)
+- address (varchar, nullable)

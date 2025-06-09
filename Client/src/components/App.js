@@ -7,6 +7,7 @@ import NavBar from "./NavBar"
 import Profits from "./Profits"
 import MillsList from "./MillList"
 import SellForm from "./sellForm"
+import ChatBot from "./ChatBot"
 const App=()=>{
     return (
         <div>
@@ -20,6 +21,7 @@ const App=()=>{
                 <Route path="/all-details" element={<div><AllDetails/></div>}></Route>
                 <Route path="/profits" element={<Profits/>}></Route>
                 <Route path="/sell" element={<SellForm/>}></Route>
+                <Route path="/chatbot" element={<ChatBot/>}></Route>
             </Routes>
         </Router>
         </div>

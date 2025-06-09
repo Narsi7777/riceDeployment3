@@ -4,6 +4,7 @@ import axios from "axios";
 import AllDetails from "../AllDetails";
 import AllCustomerDetails from "../AllCustomerDetails";
 import { useNavigate } from "react-router-dom";
+import ChatBotIcon from "./ChatBotIcon";
 const CustomersList = () => {
   const [customers, setCustomers] = useState([]);
   const [visibleInput, setVisibleInput] = useState(null);
@@ -14,6 +15,8 @@ const CustomersList = () => {
   const [searchQuery, setSearchQuery] = useState(""); 
   const [riceBrands,setRiceBrands]=useState([])
   const [sellingData,setSellingData]=useState({"sellBrand":"","sellQuantity":0,"sellPrice":0})
+  const [ChatBotIconClikked,setChatBotIconClicked]=useState(false)
+
   const navigate=useNavigate()
   useEffect(() => {
     const fetchData = async () => {
@@ -274,24 +277,51 @@ const CustomersList = () => {
   };
 
   const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    customer.address.toLowerCase().includes(searchQuery.toLowerCase())
+    customer.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
  
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+    const query=searchQuery.toLowerCase()
+
     const nameA = a.name ? a.name : ''; 
     const nameB = b.name ? b.name : ''; 
+    const doesAstarts=nameA.startsWith(query)
+    const doesBstarts=nameB.startsWith(query)
+    if(doesAstarts&&!doesBstarts){
+      return -1;
+      //In sort(), returning -1 means “a comes before b”.
+    }
+    if(doesBstarts&&!doesAstarts){
+      return 1;
 
+      //n sort(), returning 1 means “b comes before a”.
+    }
+
+     const indexA = nameA.indexOf(query);
+  const indexB = nameB.indexOf(query);
+
+  // Prefer earlier occurrence of query
+  if (indexA !== indexB) return indexA - indexB;
     return nameA.localeCompare(nameB);
   });
   const handleSellButtonClick=()=>{
     navigate("/sell")
   }
 
+  const handleChatBotIconClicked=()=>{
+    setChatBotIconClicked(true);
+    navigate("/chatbot")
+  }
   return (
+   
     <div className="customers-container">
       <div className="new-customer">
+         {ChatBotIconClikked === false && (
+  <div className="chatbot-icon-wrapper" onClick={handleChatBotIconClicked}>
+    <ChatBotIcon />
+  </div>
+)}
         {newCustomerButtonClicked === false && (
           <button className="newCustomerButton" onClick={handleNewCustomerButton}>
             Add New Customer
@@ -429,6 +459,7 @@ const CustomersList = () => {
           ))}
         </div>
       )}
+      
     </div>
   );
 };

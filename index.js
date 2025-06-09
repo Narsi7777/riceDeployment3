@@ -5,6 +5,7 @@ const app=express()
 const path=require("path")
 const port=process.env.PORT||3000
 
+require('dotenv').config();
 
 
 
@@ -686,12 +687,12 @@ const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 
 app.post("/api/chatbot", async (req, res) => {
   const userQuestion = req.body.query;
   const schema = fs.readFileSync("dbSchema.txt", "utf8");
-
+    console.log(userQuestion)
 const prompt = `You are an intelligent SQL generator bot. Based on the schema below and the user's question, generate a valid SQL query for a PostgreSQL database.
 
 Database Schema:
@@ -711,7 +712,7 @@ User Question: ${userQuestion}`;
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -719,8 +720,9 @@ User Question: ${userQuestion}`;
         messages: [{ role: "user", content: prompt }],
         temperature: 0.2
       })
+      
     });
-
+    // console.log("Ai s Response",response)
     const completion = await response.json();
     const sql = completion.choices[0].message.content.trim();
 
@@ -755,7 +757,7 @@ Based on this data, provide a clear and direct answer to the user's question. Do
       console.log("Response from OpenRouter:", response2.status, response2.statusText);
       const finalCompletion = await response2.json();
       const answer = finalCompletion.choices[0].message.content.trim();
-
+      console.log(answer)
       return res.json({
         sql,
         message: "Query executed successfully",

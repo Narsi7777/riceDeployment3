@@ -1,154 +1,120 @@
+/* CustomersList.css */
 
-.details{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 .customers-container {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  
-  .customer-box {
-    border: 2px solid #e60000; 
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .customer-box h2 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .customer-box p {
-    font-size: 14px;
-    margin: 5px 0;
-  }
-  
-  .customer-box .button-container {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .customer-box input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-
-  
-  
-  
-  .new-customer-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .new-customer-form input {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-  }
-  
-  .new-customer-form button {
-    background-color: #4CAF50; 
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .new-customer-form button:hover {
-    background-color: #45a049;
-  }
-  
-  .new-customer button {
-    background-color: #008CBA;
-    color: white;
-  }
-  
-  .new-customer button:hover {
-    background-color: #007B9A;
-  }
-  
-  .new-customer-form button[type="button"] {
-    background-color: #f44336;
-  }
-  
-  .new-customer-form button[type="button"]:hover {
-    background-color: #d32f2f;
-  }
-  
-  .add-button {
-    width: 48%;
-    background-color: #4CAF50; 
-    color: white; 
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f9;
 }
 
-.add-button:hover {
-    background-color: #45a049; 
+.new-customer, .new-customer-form {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.newCustomerButton,
+.add-button,
+.remove-button,
+button[type="submit"],
+button[type="button"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.newCustomerButton:hover,
+.add-button:hover,
+.remove-button:hover,
+button[type="submit"]:hover,
+button[type="button"]:hover {
+  background-color: #0056b3;
 }
 
 .remove-button {
-    width: 48%;
-    background-color: red; 
-    color: white; 
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  background-color: #dc3545;
 }
 
 .remove-button:hover {
-    background-color: #cc0000; 
+  background-color: #a71d2a;
 }
 
+.search-box {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 20px auto;
+  display: block;
+  font-size: 16px;
+}
 
-  .ok-button {
-    width: 100%;
-    background-color: #008CBA;
-    color: white;
-  }
-  
-  .ok-button:hover {
-    background-color: #007B9A;
-  }
-  
-  .search-box {
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 300px;
-    margin: 10px auto;
-  }
-  
-  .allDetails{
-    display: flex;
-  }
+.customer-box {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin: 15px 0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.customer-box:hover {
+  transform: translateY(-5px);
+}
+
+.customer-box h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.customer-box p {
+  margin: 4px 0;
+  color: #555;
+  font-size: 15px;
+}
+
+.button-container {
+  margin-top: 15px;
+}
+
+.new-customer-form input[type="text"] {
+  padding: 10px;
+  margin: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 45%;
+  font-size: 14px;
+}
+
+.new-customer-form button {
+  margin-top: 10px;
+}
+
+.details h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.allDetails {
+  margin-top: 20px;
+}
+.chatbot-icon-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.chatbot-icon-wrapper:hover {
+  transform: scale(1.1);
+}
