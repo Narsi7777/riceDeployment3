@@ -722,7 +722,7 @@ User Question: ${userQuestion}`;
       })
       
     });
-    // console.log("Ai s Response",response)
+    console.log("Ai s Response",response)
     const completion = await response.json();
     const sql = completion.choices[0].message.content.trim();
 
