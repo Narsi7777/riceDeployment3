@@ -2,40 +2,7 @@
 
 A full-stack web application for managing rice distribution, including inventory (storage), customers, mills, transactions, profits, and an AI-powered chatbot for natural language data queries.
 
-## 📂 Project Structure
-ricedeployment2/
-│
-├── index.js # Main Express backend server
-├── config/db.js # PostgreSQL DB configuration
-├── dbSchema.txt # Database schema used by chatbot
-├── temp.txt # Temporary file (used by chatbot)
-├── .env # Environment variables
-├── package.json # Backend dependencies
-│
-├── Client/ # React frontend
-│ ├── public/
-│ │ └── index.html
-│ └── src/
-│ ├── index.js # React entry point
-│ ├── components/
-│ │ ├── App.js
-│ │ ├── NavBar.js
-│ │ ├── StorageList.js
-│ │ ├── MillList.js
-│ │ ├── CustomerList.js
-│ │ ├── Profits.js
-│ │ ├── DateProfits.js
-│ │ ├── sellForm.js
-│ │ ├── api.js
-│ │ └── ChatBot.jsx
-│ ├── AllDetails.js
-│ ├── AllCustomerDetails.js
-│ └── index.css
 
-
-
-
----
 
 ## 🚀 Features
 
