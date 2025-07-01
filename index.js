@@ -680,14 +680,14 @@ app.get("*",(req,res)=>{
 //chat  bot api
 const fs=require("fs")
 const mysql=require("mysql")
-const {GoogleGenerativeAI}=require("@google/generative-ai")
+// const {GoogleGenerativeAI}=require("@google/generative-ai")
 const { error } = require('console')
-const genAI = new GoogleGenerativeAI("AIzaSyCUZpau1yt8qLV7Z85WYLFQaiCQe2nb898");
+// const genAI = new GoogleGenerativeAI("AIzaSyCUZpau1yt8qLV7Z85WYLFQaiCQe2nb898");
 const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const OPENROUTER_API_KEY = "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";
+// const OPENROUTER_API_KEY = "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";
 
 app.post("/api/chatbot", async (req, res) => {
   const userQuestion = req.body.query;
@@ -716,7 +716,7 @@ User Question: ${userQuestion}`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "openai/gpt-3.5-turbo",
+        model: process.env.OPENROUTER_MODEL_NAME,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.2
       })
@@ -749,7 +749,7 @@ Based on this data, provide a clear and direct answer to the user's question. Do
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "openai/gpt-3.5-turbo",
+          model: "deepseek/deepseek-r1-0528:free",
           messages: [{ role: "user", content: prompt2 }],
           temperature: 0.2
         })

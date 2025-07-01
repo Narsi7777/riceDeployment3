@@ -1,90 +1,3 @@
-create table Storage(
-	NameOfTheBrand varchar,
-	quantityInPackets integer,
-	costOfEachPacket integer,
-	location varchar
-)
-
-create table customers(
-	customer_id serial primary key,
-	name varchar(100) NOT NULL,
-	shop_name VARCHAR(100),
-	address VARCHAR(50),
-	phone_number VARCHAR(100),
-	outstanding_balance NUMERIC(10,2) DEFAULT 0.00
-);
-
-CREATE TABLE IF NOT EXISTS public.transactions
-(
-    transaction_id SERIAL PRIMARY KEY,  -- Using SERIAL for auto-increment
-    customer_id INTEGER NOT NULL,       -- Ensuring customer_id is not NULL
-    transaction_date DATE DEFAULT CURRENT_DATE,  -- Default date as current date
-    amount NUMERIC(10, 2) NOT NULL,      -- Amount with 2 decimal precision
-    transaction_type VARCHAR(6) CHECK (transaction_type IN ('add', 'remove')),  -- Limit transaction_type to 'add' or 'remove'
-    customer_name VARCHAR(255),          -- Name of the customer
-    address VARCHAR(100),                -- Address of the customer
-    CONSTRAINT fk_customer FOREIGN KEY (customer_id)
-        REFERENCES public.customers (customer_id) ON DELETE CASCADE ON UPDATE NO ACTION
-);
-
-
-
-CREATE TRIGGER transaction_after_update
-AFTER UPDATE ON public.customers
-FOR EACH ROW
-EXECUTE FUNCTION public.update_transaction();
-
-
-
-CREATE OR REPLACE FUNCTION public.update_transaction()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $function$
-BEGIN
-    -- Insert a record into transactions table based on balance change
-    INSERT INTO transactions (customer_id, amount, transaction_type, customer_name, address)
-    VALUES (
-        NEW.customer_id,
-        NEW.outstanding_balance - OLD.outstanding_balance,  -- Difference in outstanding balance
-        CASE
-            WHEN NEW.outstanding_balance > OLD.outstanding_balance THEN 'add'  -- If balance increased
-            ELSE 'remove'  -- If balance decreased
-        END,
-        (SELECT name FROM customers WHERE customer_id = NEW.customer_id),
-        (SELECT address FROM customers WHERE customer_id = NEW.customer_id)
-    );
-    RETURN NEW;  -- Return the new row after the update
-END;
-$function$
-
-create table mills(
-mill_id serial primary key,
-mill_name varchar(100) not null,
-location varchar(100),
-amount_due numeric(10,2)
-);
-
-
-create profits(
-	profit_id serial primary key,
-	date_of_profit date,
-	profit_amount numeric(10,2),
-	expenses_amount numeric(10,2)
-);
-
-
-ALTER TABLE profits 
-ALTER COLUMN expenses_amount SET DEFAULT 0;
-
-
-drop trigger transaction_after_update on customers
-outsider customer id
-
-
-//need to update transactions table
-
-
-
 
 //updated
 
@@ -155,5 +68,42 @@ CREATE TABLE IF NOT EXISTS public.mill_transactions (
         ON UPDATE NO ACTION
         ON DELETE CASCADE
 );
+
+
+
+
+-- SELECT pg_get_serial_sequence('customers', 'customer_id');
+-- SELECT MAX(customer_id) FROM customers;
+-- SELECT setval('public.customers_customer_id_seq', 111, true);
+
+
+
+-- SELECT pg_get_serial_sequence('mill_transactions', 'mill_transaction_id');
+-- select max(mill_transaction_id) from mill_transactions
+-- SELECT setval('public.mill_transactions_mill_transaction_id_seq', 209, true);
+
+
+
+-- SELECT pg_get_serial_sequence('mills', 'mill_id');
+-- select max(mill_id) from mill_transactions
+-- SELECT setval('public.mills_mill_id_seq', 12, true);
+
+
+
+-- SELECT pg_get_serial_sequence('profits', 'profit_id');
+-- select max(profit_id) from profits
+SELECT setval('public.profits_profit_id_seq', 118, true);
+
+
+
+-- SELECT pg_get_serial_sequence('profits', 'profit_id');
+-- select max(profit_id) from profits
+-- SELECT setval('public.profits_profit_id_seq', 118, true);
+
+
+
+-- SELECT pg_get_serial_sequence('transactions', 'transaction_id');
+-- select max(transaction_id) from transactions
+-- SELECT setval('public.transactions_transaction_id_seq', 2995, true);
 
 
