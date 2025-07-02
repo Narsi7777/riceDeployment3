@@ -2,7 +2,7 @@ import axios from "axios"
 const baseURL =
   process.env.NODE_ENV === "production"
     ? "https://ricedeployment2.onrender.com/" 
-    : "http://localhost:3000/api";   
+    : "http://localhost:3000/";   
 const API=axios.create({baseURL,})
 API.interceptors.request.use((config) => {
     

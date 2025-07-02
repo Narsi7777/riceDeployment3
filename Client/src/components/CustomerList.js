@@ -325,6 +325,11 @@ if (role !== "admin") {
     <div className="access-denied">
       <h2>Access Denied</h2>
       <p>You do not have permission to view this page. Please contact admin.</p>
+        <div className="top-bar">
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
     </div>
   );
 }
