@@ -8,7 +8,7 @@ return (
     <div className="navbar">
         <ul className="nav-list">
         <li className="nav-item">
-                <Link to="/" className="nav-link">Home</Link>
+                <Link to="/home" className="nav-link">Home</Link>
             </li>
             <li className="nav-item">
                 <Link to="/storage" className="nav-link">Storage</Link>

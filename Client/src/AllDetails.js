@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import axios from "axios";
+import axios from "./components/api";
 import "react-datepicker/dist/react-datepicker.css";
 
 const AllDetails = () => {
@@ -62,6 +62,15 @@ const AllDetails = () => {
     for(let i=0;i<todayRemovedDetails.length;i++){
       totalMoney+=parseFloat(todayRemovedDetails[i].amount)
     }
+     const role = localStorage.getItem("role");
+if (role !== "admin") {
+  return (
+    <div className="access-denied">
+      <h2>Access Denied</h2>
+      <p>You do not have permission to view this page. Please contact admin.</p>
+    </div>
+  );
+}
   return (
     <div>
     <div style={styles.container}>

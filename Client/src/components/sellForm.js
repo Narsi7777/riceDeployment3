@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import axios from "axios";
+import axios from "./api";
 import { useNavigate } from "react-router-dom";
 
 const SellForm = () => {
@@ -104,7 +104,7 @@ const SellForm = () => {
     }
 
 
-    navigate("/")
+    navigate("/home")
   };
 
   // Render form

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./CustomersList.css";
-import axios from "axios";
+import axios from "./api";
 import AllDetails from "../AllDetails";
 import AllCustomerDetails from "../AllCustomerDetails";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,8 @@ const CustomersList = () => {
 
   const navigate=useNavigate()
   useEffect(() => {
+
+
     const fetchData = async () => {
       try {
         const response = await axios.get("/customers");
@@ -270,6 +272,10 @@ const CustomersList = () => {
   };
 
 
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  navigate("/login");
+};
 
 
   const handleSearchChange = (e) => {
@@ -313,9 +319,23 @@ const CustomersList = () => {
     setChatBotIconClicked(true);
     navigate("/chatbot")
   }
+  const role = localStorage.getItem("role");
+if (role !== "admin") {
+  return (
+    <div className="access-denied">
+      <h2>Access Denied</h2>
+      <p>You do not have permission to view this page. Please contact admin.</p>
+    </div>
+  );
+}
   return (
    
     <div className="customers-container">
+      <div className="top-bar">
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
       <div className="new-customer">
          {ChatBotIconClikked === false && (
   <div className="chatbot-icon-wrapper" onClick={handleChatBotIconClicked}>
