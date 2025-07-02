@@ -1,5 +1,9 @@
 import axios from "axios"
-const API=axios.create({baseURL:"http://localhost:3000"})
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://ricedeployment2.onrender.com/" 
+    : "http://localhost:3000/api";   
+const API=axios.create({baseURL,})
 API.interceptors.request.use((config) => {
     
   const token = localStorage.getItem("token");
