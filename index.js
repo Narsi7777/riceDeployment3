@@ -31,7 +31,29 @@ const millRoutes = require("./routes/mills");
 const profitRoutes = require("./routes/profits");
 const transactionRoutes = require("./routes/transactions");
 
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://ricevault.shop;");
 
+  // Optional additions
+  res.setHeader("Access-Control-Allow-Origin", "https://ricevault.shop");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+
+  next();
+});
+app.use(cors({
+  origin: "https://ricevault.shop",
+  credentials: true
+}));
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "https://ricevault.shop"],
+  
+    },
+  })
+);
 app.use("/api/auth", authRoutes);
 
 app.use("/", verifyToken, customerRoutes);
