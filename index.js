@@ -10,17 +10,38 @@ const pool = require("./config/db");
 
 const app = express();
 const port = process.env.PORT || 3000;
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "Client/build")));
+}
 
 
-app.use(cors());
-app.use(helmet());
+const allowedOrigin = "https://ricevault.shop";
+
+// Security Headers via Helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", allowedOrigin],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+    },
+  },
+}));
+
+// CORS Configuration
+app.use(cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(bodyParser.json());
 
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "Client/build")));
-}
 
 
 const verifyToken = require("./middleware/verifyToken");
@@ -31,29 +52,7 @@ const millRoutes = require("./routes/mills");
 const profitRoutes = require("./routes/profits");
 const transactionRoutes = require("./routes/transactions");
 
-app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://ricevault.shop;");
 
-  // Optional additions
-  res.setHeader("Access-Control-Allow-Origin", "https://ricevault.shop");
-  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-  next();
-});
-app.use(cors({
-  origin: "https://ricevault.shop",
-  credentials: true
-}));
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://ricevault.shop"],
-  
-    },
-  })
-);
 app.use("/api/auth", authRoutes);
 
 app.use("/", verifyToken, customerRoutes);
