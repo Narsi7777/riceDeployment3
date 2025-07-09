@@ -11,24 +11,24 @@ const pool = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Allow only your frontend origin
-const allowedOrigin = "https://ricevault.shop";
+// Allowed Origins
+const frontendOrigin = "https://ricevault.shop";
+const backendOrigin = "https://ricedeployment2.onrender.com";
 
-// === CORS Configuration ===
+// === CORS Middleware ===
 app.use(cors({
-  origin: allowedOrigin,
+  origin: frontendOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// === Helmet Security Configuration ===
-// Allow frontend connection in connectSrc and scriptSrc
+// === Helmet CSP ===
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", allowedOrigin, "https://openrouter.ai"],
+      connectSrc: ["'self'", frontendOrigin, backendOrigin, "https://openrouter.ai"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:"],
@@ -38,10 +38,11 @@ app.use(helmet({
   },
 }));
 
+// Parse JSON bodies
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Serve static files in production
+// === Serve Frontend in Production ===
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "Client/build")));
 
@@ -50,7 +51,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Middleware
+// === Routes & Middleware ===
 const verifyToken = require("./middleware/verifyToken");
 const authRoutes = require("./auth");
 const customerRoutes = require("./routes/customers");
@@ -59,7 +60,6 @@ const millRoutes = require("./routes/mills");
 const profitRoutes = require("./routes/profits");
 const transactionRoutes = require("./routes/transactions");
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/", verifyToken, customerRoutes);
 app.use("/", verifyToken, storageRoutes);
@@ -67,7 +67,7 @@ app.use("/", verifyToken, millRoutes);
 app.use("/", verifyToken, profitRoutes);
 app.use("/", verifyToken, transactionRoutes);
 
-// Chatbot route
+// === Chatbot Endpoint ===
 app.post("/api/chatbot", verifyToken, async (req, res) => {
   const userQuestion = req.body.query;
   const schema = fs.readFileSync("dbSchema.txt", "utf8");
@@ -141,7 +141,7 @@ Based on this data, give a clear and direct answer to the question without expla
   }
 });
 
-// Start the server
+// === Start Server ===
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
