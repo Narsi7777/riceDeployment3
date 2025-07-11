@@ -68,6 +68,7 @@ const transactionRoutes = require("./routes/transactions");
 app.use("/api/auth", authRoutes); // Login/signup does NOT require token
 app.use("/", verifyToken, customerRoutes);
 app.use("/", verifyToken, storageRoutes);
+
 app.use("/", verifyToken, millRoutes);
 app.use("/", verifyToken, profitRoutes);
 app.use("/", verifyToken, transactionRoutes);

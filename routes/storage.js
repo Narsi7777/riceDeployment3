@@ -5,6 +5,7 @@ const router = express.Router();
 // Get all storage data
 router.get("/storage", async (req, res) => {
   try {
+    console.log("HIT /storage route");
     const result = await pool.query("SELECT * FROM Storage");
     res.status(200).json(result.rows);
   } catch (err) {
