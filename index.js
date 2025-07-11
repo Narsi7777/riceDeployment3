@@ -11,37 +11,24 @@ const pool = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// === CORS Configuration ===
+// === Allowed Origins ===
 const allowedOrigins = [
   "https://ricevault.shop",
   "https://ricedeployment2.onrender.com"
 ];
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
+// === CORS Middleware ===
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
-// === Helmet (basic security, no CSP) ===
+// === Helmet Security Headers (CSP Configured) ===
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: [
-        "'self'",
-        "https://ricedeployment2.onrender.com",
-        "https://ricevault.shop",
-        "https://openrouter.ai"
-      ],
+      defaultSrc: ["'self'", ...allowedOrigins],
+      connectSrc: ["'self'", ...allowedOrigins, "https://openrouter.ai"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
@@ -51,6 +38,11 @@ app.use(helmet({
   },
 }));
 
+// === Logging for Debugging ===
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.url}`);
+  next();
+});
 
 // === Body Parsers ===
 app.use(express.json());
@@ -73,7 +65,7 @@ const millRoutes = require("./routes/mills");
 const profitRoutes = require("./routes/profits");
 const transactionRoutes = require("./routes/transactions");
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); // Login/signup does NOT require token
 app.use("/", verifyToken, customerRoutes);
 app.use("/", verifyToken, storageRoutes);
 app.use("/", verifyToken, millRoutes);
@@ -156,5 +148,5 @@ Based on this data, give a clear and direct answer to the question without expla
 
 // === Start Server ===
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
