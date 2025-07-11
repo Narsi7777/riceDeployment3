@@ -11,48 +11,42 @@ const pool = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// === Allowed Origins ===
 const allowedOrigins = [
   "https://ricevault.shop",
-  "https://ricedeployment2.onrender.com"
+  "https://ricedeployment2.onrender.com",
+  "http://localhost:3001", // Dev frontend
 ];
 
-// === CORS Middleware ===
+// Enable CORS
 app.use(cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
 }));
 
-// === Helmet Security Headers (CSP Configured) ===
-app.use(helmet({
-  contentSecurityPolicy: {
+// CSP with helmet
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", ...allowedOrigins],
-      connectSrc: ["'self'", ...allowedOrigins, "https://openrouter.ai"],
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "https://ricevault.shop", "https://ricedeployment2.onrender.com", "https://openrouter.ai"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:"],
       objectSrc: ["'none'"],
     },
-  },
-}));
+  })
+);
 
-// === Logging for Debugging ===
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.url}`);
-  next();
-});
-
-// === Body Parsers ===
+// Body parsing
 app.use(express.json());
 app.use(bodyParser.json());
 
-// === Serve Frontend in Production ===
-
-
-// === Routes & Middleware ===
+// Token check
 const verifyToken = require("./middleware/verifyToken");
+
+// Routes
 const authRoutes = require("./auth");
 const customerRoutes = require("./routes/customers");
 const storageRoutes = require("./routes/storage");
@@ -60,37 +54,36 @@ const millRoutes = require("./routes/mills");
 const profitRoutes = require("./routes/profits");
 const transactionRoutes = require("./routes/transactions");
 
-app.use("/api/auth", authRoutes); // Login/signup does NOT require token
+// Logging for debug
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.url}`);
+  next();
+});
+
+// Auth route (no token required)
+app.use("/api/auth", authRoutes);
+
+// Protected routes (token required)
 app.use("/", verifyToken, customerRoutes);
 app.use("/", verifyToken, storageRoutes);
-
 app.use("/", verifyToken, millRoutes);
 app.use("/", verifyToken, profitRoutes);
 app.use("/", verifyToken, transactionRoutes);
+
+// Serve frontend
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "Client/build")));
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "Client/build", "index.html"));
   });
 }
-// === Chatbot Endpoint ===
+
+// Chatbot route
 app.post("/api/chatbot", verifyToken, async (req, res) => {
   const userQuestion = req.body.query;
   const schema = fs.readFileSync("dbSchema.txt", "utf8");
 
-  const prompt = `You are an intelligent SQL generator bot. Based on the schema below and the user's question, generate a valid SQL query for a PostgreSQL database.
-
-Database Schema:
-${schema}
-
-Instructions:
-- Use PostgreSQL syntax only (NOT MySQL).
-- For date filtering, use EXTRACT(MONTH FROM column) and EXTRACT(YEAR FROM column).
-- For name filtering, use: LOWER(name) LIKE LOWER('%<name>%')
-- Return only the SQL query. No explanations or markdown.
-
-User Question: ${userQuestion}`;
-
+  const prompt = `You are an intelligent SQL generator bot...`; // keep your prompt
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -109,16 +102,11 @@ User Question: ${userQuestion}`;
     const sql = completion.choices[0].message.content.trim();
 
     pool.query(sql, async (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message, sql });
-      }
+      if (err) return res.status(500).json({ error: err.message, sql });
 
       const data = results.rows || results;
-      const prompt2 = `You are a helpful assistant. A user asked: "${userQuestion}".
-We generated and ran this SQL query: ${sql}
-Here is the data: ${JSON.stringify(data)}
 
-Based on this data, give a clear and direct answer to the question without explaining the SQL or schema.`;
+      const prompt2 = `You are a helpful assistant...`; // your second prompt
 
       const response2 = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -147,7 +135,7 @@ Based on this data, give a clear and direct answer to the question without expla
   }
 });
 
-// === Start Server ===
+// Start server
 app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
