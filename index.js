@@ -11,41 +11,35 @@ const pool = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Allowed Origins
-const frontendOrigin = "https://ricevault.shop";
-const backendOrigin = "https://ricedeployment2.onrender.com";
+// === CORS Configuration ===
+const allowedOrigins = [
+  "https://ricevault.shop"
+];
 
-// === CORS Middleware ===
-app.use(cors({
-  origin: frontendOrigin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.options("*", cors());
-// === Helmet CSP ===
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", frontendOrigin, backendOrigin, "https://openrouter.ai"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      objectSrc: ["'none'"],
-    },
-  },
-}));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// Parse JSON bodies
+// === Helmet (basic security, no CSP) ===
+app.use(helmet()); // You can add back CSP after verifying CORS is working
+
+// === Body Parsers ===
 app.use(express.json());
 app.use(bodyParser.json());
 
 // === Serve Frontend in Production ===
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "Client/build")));
-
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "Client/build", "index.html"));
   });
@@ -145,4 +139,3 @@ Based on this data, give a clear and direct answer to the question without expla
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-//hi
