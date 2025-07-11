@@ -49,12 +49,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 // === Serve Frontend in Production ===
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "Client/build")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
-  });
-}
+
 
 // === Routes & Middleware ===
 const verifyToken = require("./middleware/verifyToken");
@@ -72,7 +67,12 @@ app.use("/", verifyToken, storageRoutes);
 app.use("/", verifyToken, millRoutes);
 app.use("/", verifyToken, profitRoutes);
 app.use("/", verifyToken, transactionRoutes);
-
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "Client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
+  });
+}
 // === Chatbot Endpoint ===
 app.post("/api/chatbot", verifyToken, async (req, res) => {
   const userQuestion = req.body.query;
