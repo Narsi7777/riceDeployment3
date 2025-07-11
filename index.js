@@ -59,7 +59,12 @@ app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.url}`);
   next();
 });
-
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "Client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
+  });
+}
 // Auth route (no token required)
 app.use("/api/auth", authRoutes);
 
@@ -71,12 +76,7 @@ app.use("/", verifyToken, profitRoutes);
 app.use("/", verifyToken, transactionRoutes);
 
 // Serve frontend
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "Client/build")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
-  });
-}
+
 
 // Chatbot route
 app.post("/api/chatbot", verifyToken, async (req, res) => {
