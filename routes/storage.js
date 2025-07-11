@@ -77,13 +77,17 @@ router.put("/updateStorage/:name/remove", async (req, res) => {
 // Add new brand
 router.post("/storage/addBrand", async (req, res) => {
   const { nameofthebrand, quantityinpackets, costofeachpacket, location } = req.body;
-
+  console.log(req.body)
   if (!nameofthebrand || !quantityinpackets || !costofeachpacket) {
     return res.status(400).send("Missing brand data");
   }
 
   try {
-    await pool.query("INSERT INTO Storage VALUES ($1, $2, $3, $4)", [quantityinpackets, costofeachpacket, nameofthebrand, location]);
+    // await pool.query("INSERT INTO Storage VALUES ($1, $2, $3, $4)", [quantityinpackets, costofeachpacket, nameofthebrand, location]);
+    await pool.query(
+  "INSERT INTO Storage (nameofthebrand, quantityinpackets, costofeachpacket, location) VALUES ($1, $2, $3, $4)",
+  [nameofthebrand, quantityinpackets, costofeachpacket, location]
+);
     res.status(200).send("Brand added");
   } catch (err) {
     console.error("Brand insert error:", err);
