@@ -13,7 +13,8 @@ const port = process.env.PORT || 3000;
 
 // === CORS Configuration ===
 const allowedOrigins = [
-  "https://ricevault.shop"
+  "https://ricevault.shop",
+  "https://ricedeployment2.onrender.com"
 ];
 
 app.use((req, res, next) => {
