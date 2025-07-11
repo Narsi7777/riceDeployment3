@@ -32,7 +32,25 @@ app.use((req, res, next) => {
 });
 
 // === Helmet (basic security, no CSP) ===
-app.use(helmet()); // You can add back CSP after verifying CORS is working
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        "https://ricedeployment2.onrender.com",
+        "https://ricevault.shop",
+        "https://openrouter.ai"
+      ],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+    },
+  },
+}));
+
 
 // === Body Parsers ===
 app.use(express.json());
