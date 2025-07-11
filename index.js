@@ -61,9 +61,6 @@ app.use((req, res, next) => {
 });
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "Client/build")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
-  });
 }
 // Auth route (no token required)
 app.use("/api/auth", authRoutes);
@@ -134,7 +131,9 @@ app.post("/api/chatbot", verifyToken, async (req, res) => {
     return res.status(500).json({ error: "Something went wrong", details: err.message });
   }
 });
-
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "Client/build", "index.html"));
+  });
 // Start server
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
