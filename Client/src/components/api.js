@@ -28,6 +28,8 @@ API.interceptors.request.use((config) => {
   
 // export const getAllDetails = () => API.get("/storage/allDetails");
 
-export const loginUser = (credentials) => API.post("/api/auth/login", credentials);
+export const loginUser = (credentials) => API.post("/api/auth/login", credentials, {
+  withCredentials: true
+});
 export const registerUser = (credentials) => API.post("/api/auth/register", credentials);
 export default API

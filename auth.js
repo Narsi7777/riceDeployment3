@@ -22,7 +22,7 @@ app.post("/register",async(req,res)=>{
 app.post("/login",async(req,res)=>{
     const {username,password}=req.body
     console.log("Incoming login:", username, password);
-
+    
     const result=await pool.query('select * from users where username=$1',[username])
     // console.log(result)
 
