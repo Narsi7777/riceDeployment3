@@ -6,7 +6,7 @@ function verifyToken(req, res, next) {
     console.log("token missing")
     return res.status(403).json({ error: "Token Missing" });
   }
-
+  console.log("Token Received")
   const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
 
   try {
