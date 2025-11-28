@@ -114,6 +114,26 @@ CREATE TABLE users (
 -- SELECT setval('public.profits_profit_id_seq', 118, true);
 
 
+//updateddddd 
+
+-- SELECT setval(pg_get_serial_sequence('customers', 'customer_id'),
+--               (SELECT MAX(customer_id) FROM customers), true);
+
+-- SELECT setval(pg_get_serial_sequence('mill_transactions', 'mill_transaction_id'),
+--               (SELECT MAX(mill_transaction_id) FROM mill_transactions), true);
+
+-- SELECT setval(pg_get_serial_sequence('mills', 'mill_id'),
+--               (SELECT MAX(mill_id) FROM mills), true);
+
+-- SELECT setval(pg_get_serial_sequence('profits', 'profit_id'),
+--               (SELECT MAX(profit_id) FROM profits), true);
+
+-- SELECT setval(pg_get_serial_sequence('users', 'user_id'),
+--               (SELECT MAX(user_id) FROM users), true);
+-- SELECT setval(pg_get_serial_sequence('transactions', 'transaction_id'),
+--               (SELECT MAX(transaction_id) FROM transactions), true);
+
+
 
 -- SELECT pg_get_serial_sequence('transactions', 'transaction_id');
 -- select max(transaction_id) from transactions
