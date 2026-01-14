@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./MillsList.css";
-import axios from "axios";
+import axios from "./api";
 
 const MillsList = () => {
   const [mills, setMills] = useState([]);
@@ -108,7 +108,15 @@ const MillsList = () => {
 
     return nameA.localeCompare(nameB);
   });
-
+   const role = localStorage.getItem("role");
+if (role !== "admin") {
+  return (
+    <div className="access-denied">
+      <h2>Access Denied</h2>
+      <p>You do not have permission to view this page. Please contact admin.</p>
+    </div>
+  );
+}
   return (
     <div className="mills-container">
       <div className="new-mill">

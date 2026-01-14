@@ -1,16 +1,26 @@
-import axios from "axios"
-const API=axios.create({baseURL:"http://localhost:3001"})
+import axios from "axios";
 
-export const getCustomers=()=>API.get("/customers")
+// Automatically switch API URL between development and production
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://ricedeployment2.onrender.com"
+    : "http://localhost:3000";
 
-export const getStorage = () => API.get("/storage");
+const API = axios.create({
+  baseURL,
+  withCredentials: true, // Enables sending cookies if needed
+});
 
-export const updateStorage=(name,column,value)=>API.put(`/updateStorage/${name}`,{column,value})
+// Attach JWT token from localStorage if available
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export const addPackets=(name,addPackets)=>API.put(`/updateStorage/${name}/add`,{addPackets})
+export const loginUser = (credentials) => API.post("/api/auth/login", credentials);
+export const registerUser = (credentials) => API.post("/api/auth/register", credentials);
 
-export const removePackets=(name,addPackets)=>API.put(`/updateStorage/${name}/remove`,{addPackets})
-
-export const addBrand = (brand)=>API.post("/storage/addBrand", brand);
-  
-export const getAllDetails = () => API.get("/storage/allDetails");
+export default API;

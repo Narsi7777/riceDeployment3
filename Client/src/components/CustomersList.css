@@ -118,3 +118,18 @@ button[type="button"]:hover {
 .chatbot-icon-wrapper:hover {
   transform: scale(1.1);
 }
+.logout-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}

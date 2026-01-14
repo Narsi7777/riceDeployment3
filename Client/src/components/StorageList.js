@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from "react"
 import "./StorageList.css"
-import axios from "axios"
+import axios from "./api"
 import NewBrandForm from "./newBrandForm"
 import AllDetails from "../AllDetails";
 
@@ -140,7 +140,15 @@ const StorageList=()=>{
             }));
         }
     };
-    
+    const role = localStorage.getItem("role");
+    if (role !== "admin") {
+  return (
+    <div className="access-denied">
+      <h2>Access Denied</h2>
+      <p>You do not have permission to view this page. Please contact admin.</p>
+    </div>
+  );
+} 
     return (
             <div className="storage-container">
                 <div className="new-brand">

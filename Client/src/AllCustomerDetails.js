@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import axios from "axios"
+import axios from "./components/api"
 
 const AllCustomerDetails=()=>{
 const [allData,setAllData]=useState([])

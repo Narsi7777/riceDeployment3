@@ -70,30 +70,43 @@ CREATE TABLE IF NOT EXISTS public.mill_transactions (
 );
 
 
-
+CREATE TABLE users (
+  user_id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(20) DEFAULT 'staff'  -- can be 'admin' or 'staff'
+);
 
 -- SELECT pg_get_serial_sequence('customers', 'customer_id');
 -- SELECT MAX(customer_id) FROM customers;
--- SELECT setval('public.customers_customer_id_seq', 111, true);
+-- SELECT setval('public.customers_customer_id_seq', 113, true);
 
 
 
 -- SELECT pg_get_serial_sequence('mill_transactions', 'mill_transaction_id');
 -- select max(mill_transaction_id) from mill_transactions
--- SELECT setval('public.mill_transactions_mill_transaction_id_seq', 209, true);
+-- SELECT setval('public.mill_transactions_mill_transaction_id_seq', 255, true);
 
 
 
 -- SELECT pg_get_serial_sequence('mills', 'mill_id');
 -- select max(mill_id) from mill_transactions
--- SELECT setval('public.mills_mill_id_seq', 12, true);
+-- SELECT setval('public.mills_mill_id_seq', 14, true);
 
 
 
 -- SELECT pg_get_serial_sequence('profits', 'profit_id');
 -- select max(profit_id) from profits
-SELECT setval('public.profits_profit_id_seq', 118, true);
+-- SELECT setval('public.profits_profit_id_seq', 125, true);
 
+-- SELECT pg_get_serial_sequence('users', 'user_id');
+-- select max(user_id) from users
+-- SELECT setval('public.users_user_id_seq', 4, true);
+
+
+-- SELECT pg_get_serial_sequence('transactions', 'transaction_id');
+-- select max(transaction_id) from transactions
+-- SELECT setval('public.transactions_transaction_id_seq', 3750, true);
 
 
 -- SELECT pg_get_serial_sequence('profits', 'profit_id');
@@ -101,9 +114,27 @@ SELECT setval('public.profits_profit_id_seq', 118, true);
 -- SELECT setval('public.profits_profit_id_seq', 118, true);
 
 
+//updateddddd 
+
+-- SELECT setval(pg_get_serial_sequence('customers', 'customer_id'),
+--               (SELECT MAX(customer_id) FROM customers), true);
+
+-- SELECT setval(pg_get_serial_sequence('mill_transactions', 'mill_transaction_id'),
+--               (SELECT MAX(mill_transaction_id) FROM mill_transactions), true);
+
+-- SELECT setval(pg_get_serial_sequence('mills', 'mill_id'),
+--               (SELECT MAX(mill_id) FROM mills), true);
+
+-- SELECT setval(pg_get_serial_sequence('profits', 'profit_id'),
+--               (SELECT MAX(profit_id) FROM profits), true);
+
+-- SELECT setval(pg_get_serial_sequence('users', 'user_id'),
+--               (SELECT MAX(user_id) FROM users), true);
+-- SELECT setval(pg_get_serial_sequence('transactions', 'transaction_id'),
+--               (SELECT MAX(transaction_id) FROM transactions), true);
+
+
 
 -- SELECT pg_get_serial_sequence('transactions', 'transaction_id');
 -- select max(transaction_id) from transactions
 -- SELECT setval('public.transactions_transaction_id_seq', 2995, true);
-
-
