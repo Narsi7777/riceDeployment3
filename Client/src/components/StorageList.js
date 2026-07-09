@@ -173,8 +173,8 @@ const StorageList=()=>{
                 {sortedStorage.map((item,index)=>(
                     <div className="storage-box" key={index}>
                         <h2>{item.nameofthebrand}</h2>
-                        <p className={item.quantityinpackets <= 0 ? "out-of-stock" : ""}>
-  Packets: {item.quantityinpackets}
+                        <p style={{ color: "red" }}>
+    Packets: {item.quantityinpackets}
 </p>
                         <p>Cost:{item.costofeachpacket}/-</p>
                         <div className="button-container">
