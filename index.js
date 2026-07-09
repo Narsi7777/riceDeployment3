@@ -12,6 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const allowedOrigins = [
+  "https://ricevault.store"
   "https://ricevault.shop",
   "https://ricedeployment2.onrender.com",
   "http://localhost:3001", // Dev frontend
